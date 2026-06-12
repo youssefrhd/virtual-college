@@ -116,3 +116,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+frontend/node_modules/
+frontend/build/
