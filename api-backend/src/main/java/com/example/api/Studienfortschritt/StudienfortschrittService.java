@@ -15,7 +15,7 @@ import com.example.api.student.StudentService;
 @Service
 public class StudienfortschrittService {
     private final StudentService studentService;
-    private final ModulService modulService ;
+    
 
     public StudienfortschrittService(StudentService studentService) {
         this.studentService = studentService;
