@@ -38,7 +38,7 @@ public class authService {
         }
         Student student = new Student(
                 req.vorname(), req.nachname(), req.email(),
-                passwordEncoder.encode(req.passwort()), req.geburtsdatum(),
+                passwordEncoder.encode(req.passwort()), req.geburtsdatum(),req.matrikelNr(),
                 req.studiengang(),
                 req.semester() != null ? req.semester() : 1);
         student.generiereAktivierungsToken();
@@ -59,7 +59,7 @@ public class authService {
         }
         Professor professor = new Professor(
                 req.vorname(), req.nachname(), req.email(),
-                passwordEncoder.encode(req.passwort()), req.geburtsdatum(),
+                passwordEncoder.encode(req.passwort()), req.geburtsdatum(),req.persoNr(),
                 req.titel(), req.fachbereich());
         professor.generiereAktivierungsToken();
 

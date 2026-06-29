@@ -30,8 +30,6 @@ public class Pruefung {
     @Column(name = "anmeldung_ende", nullable = false)
     private LocalDate anmeldungEnde;
 
-    @Column(name = "versuch_nr", nullable = false)
-    private Integer versuchNr = 1;
     @Column(name = "raum", length = 50)
     private String raum;
 
@@ -131,13 +129,7 @@ public class Pruefung {
         return anmeldungen;
     }
 
-    public Integer getVersuchNr() {
-        return versuchNr;
-    }
-
-    public void setVersuchNr(Integer versuchNr) {
-        this.versuchNr = versuchNr;
-    }
+   
 
     public LocalDate getAnmeldungStart() {
         return anmeldungStart;

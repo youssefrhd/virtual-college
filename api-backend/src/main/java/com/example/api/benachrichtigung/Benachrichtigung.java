@@ -1,16 +1,14 @@
 package com.example.api.benachrichtigung;
 
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.example.api.user.User;
 
-
 @Entity
 @Table(name = "benachrichtigung")
-public class Benachrichtigung  {
+public class Benachrichtigung {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,29 +24,66 @@ public class Benachrichtigung  {
 
     @Column(name = "gesendet_am")
     private LocalDateTime gesendetAm;
+    @Column(name = "gelesen")
+    private boolean gelesen;
 
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User empfaenger;
 
+    public enum Typ {
+        ECHTZEIT, ERINNERUNG, INFO, WARNUNG
+    }
 
-    public enum Typ { ECHTZEIT, ERINNERUNG, INFO, WARNUNG }
+    public Benachrichtigung() {
+    }
 
-    public Benachrichtigung() {}
+    public UUID getId() {
+        return benachrichtigungId;
+    }
 
-    
-    public UUID getId() { return benachrichtigungId; }
+    public UUID getBenachrichtigungId() {
+        return benachrichtigungId;
+    }
 
+    public Typ getTyp() {
+        return typ;
+    }
 
-    public UUID          getBenachrichtigungId()               { return benachrichtigungId; }
-    public Typ           getTyp()                              { return typ; }
-    public void          setTyp(Typ typ)                       { this.typ = typ; }
-    public String        getNachricht()                        { return nachricht; }
-    public void          setNachricht(String nachricht)        { this.nachricht = nachricht; }
-    public LocalDateTime getGesendetAm()                       { return gesendetAm; }
-    public void          setGesendetAm(LocalDateTime t)        { this.gesendetAm = t; }
-    public User          getEmpfaenger()                       { return empfaenger; }
-    public void          setEmpfaenger(User empfaenger)      { this.empfaenger = empfaenger; }
-    
+    public void setTyp(Typ typ) {
+        this.typ = typ;
+    }
+
+    public String getNachricht() {
+        return nachricht;
+    }
+
+    public void setNachricht(String nachricht) {
+        this.nachricht = nachricht;
+    }
+
+    public LocalDateTime getGesendetAm() {
+        return gesendetAm;
+    }
+
+    public void setGesendetAm(LocalDateTime t) {
+        this.gesendetAm = t;
+    }
+
+    public User getEmpfaenger() {
+        return empfaenger;
+    }
+
+    public void setEmpfaenger(User empfaenger) {
+        this.empfaenger = empfaenger;
+    }
+
+    public boolean isGelesen() {
+        return gelesen;
+    }
+
+    public void setGelesen(boolean gelesen) {
+        this.gelesen = gelesen;
+    }
+
 }

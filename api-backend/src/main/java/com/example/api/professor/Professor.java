@@ -16,6 +16,9 @@ import com.example.api.user.User;
 @PrimaryKeyJoinColumn(name = "user_id")
 
 public class Professor extends User {
+    @Column(name = "persoNr", length = 7)
+    private String persoNr;
+
      @Column(name = "titel", length = 50)
     private String titel;
 
@@ -28,8 +31,9 @@ public class Professor extends User {
     public Professor() {}
 
     public Professor(String vorname, String nachname, String email,
-                     String password,LocalDate gebDatum, String titel, String fachbereich) {
-        super(vorname, nachname, email, password,gebDatum, Role.PROFESSOR); 
+                     String password,LocalDate gebDatum, String persoNr,String titel, String fachbereich) {
+        super(vorname, nachname, email, password,gebDatum, Role.PROFESSOR);
+        this.persoNr=persoNr; 
         this.titel       = titel;
         this.fachbereich = fachbereich;
     }
@@ -39,5 +43,10 @@ public class Professor extends User {
     public String      getFachbereich()               { return fachbereich; }
     public void        setFachbereich(String fb)      { this.fachbereich = fb; }
     public List<Modul> getModule()                    { return module; }
+
+    public String getPersoNr() {
+        return persoNr;
+    }
+    
     
 }

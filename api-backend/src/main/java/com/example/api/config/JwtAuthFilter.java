@@ -15,11 +15,7 @@ import com.example.api.user.UserDetailsServiceImpl;
 
 import java.io.IOException;
 
-/**
- * Läuft vor jedem Request.
- * Liest den JWT aus dem Authorization-Header, validiert ihn
- * und setzt den SecurityContext falls gültig.
- */
+
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -36,6 +32,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
+                System.out.println("PATH = " + request.getServletPath());
+              System.out.println("AUTH = " + request.getHeader("Authorization"));
 
         final String authHeader = request.getHeader("Authorization");
 

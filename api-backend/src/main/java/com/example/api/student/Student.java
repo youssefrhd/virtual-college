@@ -31,10 +31,10 @@ public class Student extends User {
     public Student() {
     }
 
-    public Student(String vorname, String nachname, String email,
-            String password,LocalDate gebDatum ,String studiengang, Integer semester) {
-        super(vorname, nachname, email, password,gebDatum, Role.STUDENT); 
-        this.matrikelNr = generateMatrikelNr();
+    public Student(String vorname, String nachname,String email,
+            String password,LocalDate gebDatum ,String matrikelNr,String studiengang, Integer semester) {
+        super(vorname, nachname,email, password,gebDatum, Role.STUDENT); 
+        this.matrikelNr = matrikelNr;
         this.studiengang = studiengang;
         this.semester = semester;
     }
@@ -63,7 +63,7 @@ public class Student extends User {
     private String generateMatrikelNr() {
         return String.valueOf(
                 8_000_000 + (int) (Math.random() * 2_000_000));
-    }
+    } 
 
     public List<Pruefungsanmeldung> getPruefungsanmeldungen() {
         return pruefungsanmeldungen;

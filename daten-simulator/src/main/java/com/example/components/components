@@ -1,0 +1,73 @@
+/* 
+public class AnmeldeKonstanten {
+    public static final LocalDateTime ANMELDE_START =
+        LocalDateTime.now();
+}
+
+public interface AnmeldeObserver {
+    void update(); 
+}
+
+public abstract class SimuliertePruefung {
+    private final List<AnmeldeObserver> observers = new ArrayList<>();
+
+    public void attach(AnmeldeObserver o);
+    public void detach(AnmeldeObserver o);
+
+    protected void notify() ;
+}
+
+@Component
+public class PruefungsanmeldungSimulator extends SimuliertePruefung {
+
+    public void attach(AnmeldeObserver o) { observers.add(o); }
+    public void detach(AnmeldeObserver o) { observers.remove(o); }
+
+    protected void notify() {
+        observers.forEach(AnmeldeObserver::update);
+    }
+    public void pruefeStart() {
+        if (!LocalDateTime.now().isBefore(AnmeldeKonstanten.ANMELDE_START)) {
+            notify(); 
+        }
+    }
+}
+
+@Component
+public class MqttAnmeldePublisher implements AnmeldeObserver {
+
+    private final MqttClient mqttClient;
+
+    public MqttAnmeldePublisher(MqttClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    @Override
+    public void update() {
+        
+        MqttMessage msg = new MqttMessage("anmeldung_gestartet".getBytes());
+        msg.setQos(1);
+        mqttClient.publish("exams/registration/opened", msg);
+    }
+}
+
+@Component
+public class SimulatorStartup  {
+
+     private final PruefungsanmeldungSimulator simulator;
+    private final MqttAnmeldePublisher publisher;
+    private final TaskScheduler taskScheduler;
+
+
+    @Override
+    public void run(ApplicationArguments args) {
+        simulator.attach(publisher);
+
+        taskScheduler.schedule(
+            simulator::pruefeStart,
+            AnmeldeKonstanten.ANMELDE_START
+                .atZone(ZoneId.systemDefault()).toInstant()
+        );
+    }
+   
+}*/

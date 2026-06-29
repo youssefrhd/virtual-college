@@ -151,9 +151,10 @@ public class authController {
 record StudentRegisterRequest(
         String vorname,
         String nachname,
+        String matrikelNr,
+        LocalDate geburtsdatum,
         String email,
         String passwort,
-        LocalDate geburtsdatum,
         String studiengang,
         Integer semester) {
 }
@@ -161,6 +162,7 @@ record StudentRegisterRequest(
 record ProfessorRegisterRequest(
         String vorname,
         String nachname,
+        String persoNr,
         String email,
         String passwort,
         LocalDate geburtsdatum,

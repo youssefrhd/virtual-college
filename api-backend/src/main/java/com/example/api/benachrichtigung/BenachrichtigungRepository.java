@@ -1,0 +1,11 @@
+package com.example.api.benachrichtigung;
+
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+@Repository
+public interface BenachrichtigungRepository extends JpaRepository<Benachrichtigung,UUID>{
+
+    
+} 

@@ -9,7 +9,7 @@ import com.example.api.modul.Modul;
 
 @Entity
 @Table(name = "base_material")
-public class BaseMaterial  {
+public abstract class BaseMaterial  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

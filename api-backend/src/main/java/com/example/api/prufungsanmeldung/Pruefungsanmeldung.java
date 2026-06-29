@@ -43,6 +43,9 @@ public class Pruefungsanmeldung  {
     @Column(name = "note_eingetragen_am")
     private LocalDate eingetragenAm;
 
+    @Column(name = "versuch_nr", nullable = false)
+    private Integer versuchNr = 1;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
@@ -124,6 +127,13 @@ public class Pruefungsanmeldung  {
 
     public LocalDate getEingetragenAm() {
         return eingetragenAm;
+    }
+     public Integer getVersuchNr() {
+        return versuchNr;
+    }
+
+    public void setVersuchNr(Integer versuchNr) {
+        this.versuchNr = versuchNr;
     }
 
 }
