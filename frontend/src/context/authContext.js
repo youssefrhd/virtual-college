@@ -7,9 +7,9 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(() => {
     try {
-      const token = localStorage.getItem("vc_token");
-      const role  = localStorage.getItem("vc_role");
-      const email = localStorage.getItem("vc_email");
+      const token = localStorage.getItem("token");
+      const role  = localStorage.getItem("role");
+      const email = localStorage.getItem("email");
       return token ? { token, role, email } : null;
     } catch {
       return null;
@@ -17,16 +17,16 @@ export function AuthProvider({ children }) {
   });
 
   const saveAuth = useCallback(({ token, role, email }) => {
-    localStorage.setItem("vc_token", token);
-    localStorage.setItem("vc_role",  role);
-    localStorage.setItem("vc_email", email);
+    localStorage.setItem("token", token);
+    localStorage.setItem("role",  role);
+    localStorage.setItem("email", email);
     setAuth({ token, role, email });
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("vc_token");
-    localStorage.removeItem("vc_role");
-    localStorage.removeItem("vc_email");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
     setAuth(null);
   }, []);
 

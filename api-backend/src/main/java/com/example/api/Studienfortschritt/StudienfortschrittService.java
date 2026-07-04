@@ -5,104 +5,59 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.example.api.Studienfortschritt.dto.PruefungsUebersichtDTO;
-import com.example.api.Studienfortschritt.dto.StudienfortschrittDTO;
+import com.example.api.modul.ModulService;
+import com.example.api.prufung.Pruefung.PruefungsUebersichtDTO;
+import com.example.api.prufung.pruefungService;
 import com.example.api.prufungsanmeldung.Pruefungsanmeldung;
 import com.example.api.student.Student;
 import com.example.api.student.StudentService;
-
+import com.example.api.Studienfortschritt.StudienfortschrittController.StudienfortschrittDTO;
 
 @Service
 public class StudienfortschrittService {
-    private final StudentService studentService;
-    
+        private final StudentService studentService;
+        private final pruefungService pruefungService;
+        private final ModulService modulService;
 
-    public StudienfortschrittService(StudentService studentService) {
-        this.studentService = studentService;
-    }
+        public StudienfortschrittService(
+                        StudentService studentService,
+                        pruefungService pruefungService,
+                        ModulService modulService) {
 
-    public StudienfortschrittDTO getStudienfortschritt(UUID studentId) {
+                this.studentService = studentService;
+                this.pruefungService = pruefungService;
+                this.modulService = modulService;
+        }
 
-        Student student = studentService.findById(studentId);
+        public StudienfortschrittDTO getStudienfortschritt(UUID studentId) {
 
-        List<Pruefungsanmeldung> anmeldungen =
-                student.getPruefungsanmeldungen();
+                Student student = studentService.findById(studentId);
 
-        List<PruefungsUebersichtDTO> bestandene =
-                anmeldungen.stream()
-                        .filter(a -> Boolean.TRUE.equals(a.getBestanden()))
-                        .map(this::toDTO)
-                        .toList();
+                List<Pruefungsanmeldung> anmeldungen = pruefungService.getAnmeldungen(student);
 
-        List<PruefungsUebersichtDTO> nichtBestandene =
-                anmeldungen.stream()
-                        .filter(a -> Boolean.FALSE.equals(a.getBestanden()))
-                        .map(this::toDTO)
-                        .toList();
+                List<PruefungsUebersichtDTO> bestandene = pruefungService.getBestandenePruefungen(anmeldungen);
 
-        List<PruefungsUebersichtDTO> offene =
-                anmeldungen.stream()
-                        .filter(a -> a.getStatus() ==
-                                Pruefungsanmeldung.Status.ANGEMELDET)
-                        .filter(a -> a.getNote() == null)
-                        .map(this::toDTO)
-                        .toList();
+                List<PruefungsUebersichtDTO> nichtBestandene = pruefungService.getNichtBestandenePruefungen(anmeldungen);
 
-        int earnedEcts = anmeldungen.stream()
-                .filter(a -> Boolean.TRUE.equals(a.getBestanden()))
-                .map(a -> a.getPruefung().getModul())
-                .distinct()
-                .mapToInt(modul -> modul.getEcts())
-                .sum();
+                List<PruefungsUebersichtDTO> offene = pruefungService.getOffenePruefungen(anmeldungen);
 
-        long passedExams = bestandene.size();
+                int ects = modulService.berechneECTS(anmeldungen);
 
-        long failedExams = nichtBestandene.size();
+                double durchschnitt = pruefungService.berechneDurchschnitt(anmeldungen);
 
-        long openExams = offene.size();
+                return new StudienfortschrittDTO(
+                                ects,
+                                Math.round(durchschnitt * 100.0) / 100.0,
 
-        double averageGrade = anmeldungen.stream()
-                .filter(a -> a.getNote() != null && a.getNote()<=4)
-                .mapToDouble(Pruefungsanmeldung::getNote)
-                .average()
-                .orElse(0.0);
+                                bestandene.size(),
+                                nichtBestandene.size(),
+                                offene.size(),
 
-        return new StudienfortschrittDTO(
-                earnedEcts,
-                Math.round(averageGrade * 100.0) / 100.0,
+                                bestandene,
+                                nichtBestandene,
+                                offene);
+        }
 
-                passedExams,
-                failedExams,
-                openExams,
+        
 
-                bestandene,
-                nichtBestandene,
-                offene
-        );
-    }
-
-    private PruefungsUebersichtDTO toDTO(
-            Pruefungsanmeldung anmeldung) {
-
-        var pruefung = anmeldung.getPruefung();
-        var modul = pruefung.getModul();
-
-        return new PruefungsUebersichtDTO(
-                pruefung.getPruefungId(),
-                pruefung.getBezeichnung(),
-
-                modul.getModulId(),
-                modul.getBezeichnung(),
-                modul.getEcts(),
-
-                pruefung.getDatum(),
-                pruefung.getRaum(),
-
-                anmeldung.getNote(),
-                anmeldung.getVersuchNr(),
-
-                anmeldung.getStatus().name()
-        );
-    }
-    
 }

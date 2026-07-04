@@ -146,4 +146,22 @@ public class Pruefung {
     public void setAnmeldungEnde(LocalDate anmeldungEnde) {
         this.anmeldungEnde = anmeldungEnde;
     }
+
+     public record PruefungsUebersichtDTO(
+        UUID pruefungId,
+        String pruefungsBezeichnung,
+
+        UUID modulId,
+        String modulBezeichnung,
+        Integer ects,
+
+        LocalDate pruefungsDatum,
+        String raum,
+
+        Float note,
+        Integer versuchNr,
+
+        String status
+) {
+}
 }

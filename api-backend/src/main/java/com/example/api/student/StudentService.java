@@ -4,8 +4,10 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.example.api.student.StudentDTO.StudentProfilResponse;
-import com.example.api.student.StudentDTO.StudentProfilUpdateRequest;
+import com.example.api.student.StudentController.StudentProfilResponse;
+import com.example.api.student.StudentController.StudentProfilUpdateRequest;
+
+
 
 @Service
 public class StudentService {

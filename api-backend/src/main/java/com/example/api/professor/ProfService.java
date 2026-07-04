@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.api.professor.profDTO.ProfessorProfilResponse;
-import com.example.api.professor.profDTO.ProfessorProfilUpdateRequest;
-import com.example.api.professor.profDTO.StudentKurzProfilResponse;
+import com.example.api.professor.ProfController.ProfessorProfilResponse;
+import com.example.api.professor.ProfController.ProfessorProfilUpdateRequest;
+import com.example.api.professor.ProfController.StudentKurzProfilResponse;
 import com.example.api.student.Student;
 import com.example.api.student.StudentRepository;
 
@@ -30,6 +30,7 @@ public class ProfService {
             professor.getNachname(),
             professor.getEmail(),
             professor.getGeburtsdatum(),
+            professor.getTelefon(),
             professor.getTitel(),
             professor.getFachbereich()
         );

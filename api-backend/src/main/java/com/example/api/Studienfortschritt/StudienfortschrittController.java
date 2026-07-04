@@ -1,5 +1,6 @@
 package com.example.api.Studienfortschritt;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.api.Studienfortschritt.dto.StudienfortschrittDTO;
+import com.example.api.prufung.Pruefung.PruefungsUebersichtDTO;
 import com.example.api.student.Student;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,6 +36,18 @@ public class StudienfortschrittController {
         return service.getStudienfortschritt(student.getUserId());
     }
     
-    
+    public record StudienfortschrittDTO(
+        int earnedEcts,
+        double averageGrade,
+
+        int passedExams,
+        int failedExams,
+        int openExams,
+
+        List<PruefungsUebersichtDTO> bestandenePruefungen,
+        List<PruefungsUebersichtDTO> nichtBestandenePruefungen,
+        List<PruefungsUebersichtDTO> offenePruefungen
+) {
+}
     
 }

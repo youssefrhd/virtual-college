@@ -37,6 +37,8 @@ public abstract class User implements UserDetails {
 
     @Column(name = "geburtsdatum")
     private LocalDate geburtsdatum;
+     @Column(name = "telefon", length = 15)
+    private String telefon;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
@@ -78,13 +80,14 @@ public abstract class User implements UserDetails {
     }
 
     protected User(String vorname, String nachname, String email,
-            String password, LocalDate geburtsdatum, Role role) {
+            String password, LocalDate geburtsdatum,String telefon, Role role) {
         this.vorname = vorname;
         this.nachname = nachname;
         this.email = email;
         this.password = password;
         this.role = role;
         this.geburtsdatum = geburtsdatum;
+        this.telefon=telefon;
     }
 
     @Override
@@ -188,6 +191,14 @@ public abstract class User implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getTelefon() {
+        return telefon;
+    }
+
+    public void setTelefon(String telefon) {
+        this.telefon = telefon;
     }
 
     public void setEmail(String email) {

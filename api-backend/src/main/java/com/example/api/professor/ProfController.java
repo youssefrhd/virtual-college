@@ -1,5 +1,6 @@
 package com.example.api.professor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.api.professor.profDTO.ProfessorProfilResponse;
-import com.example.api.professor.profDTO.ProfessorProfilUpdateRequest;
-import com.example.api.professor.profDTO.StudentKurzProfilResponse;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -52,5 +50,33 @@ public class ProfController {
  
         return ResponseEntity.ok(profService.studentKurzprofil(id));
     }
+
+
+     public record ProfessorProfilResponse(
+        String vorname,
+        String nachname,
+        String email,
+        LocalDate geburtsdatum,
+        String telefon,
+        String titel,
+        String fachbereich
+    ) {}
+ 
+    public record ProfessorProfilUpdateRequest(
+        String vorname,
+        String nachname,
+        LocalDate geburtsdatum,
+        String telefon,
+        String titel,
+        String fachbereich
+    ) {}
+ 
+    public record StudentKurzProfilResponse(
+        String vorname,
+        String nachname,
+        String email,
+        String studiengang,
+        Integer semester
+    ) {}
     
 }

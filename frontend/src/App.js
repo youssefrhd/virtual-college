@@ -6,27 +6,37 @@ import ForgotView from "./views/ForgotView";
 import SuccessView from "./views/SuccessView";
 import ActivateView from "./views/ActivateView";
 
-import StudentDashboard    from "./views/StudentDashboard";
-import ProfessorDashboard      from "./views/ProfessorDashboard";
-import StudienfortschrittPage  from "./views/StudienfortschrittPage";
+import StudentDashboard from "./views/StudentDashboard";
+import ProfessorDashboard from "./views/ProfessorDashboard";
+import StudienfortschrittPage from "./views/StudienfortschrittPage";
 import { StudentProfile, ProfessorProfile } from "./views/ProfilePage";
+import ResetPasswordView from "./views/ResetPasswordView";
 
 import { ROLES } from "./config/roles";
-import { useState } from "react";
-import { useAuth } from "./context/authContext"; 
+import { useState, useEffect } from "react";
+import { useAuth } from "./context/authContext";
 
 function App() {
-  const { auth, logout } = useAuth(); 
+  const { auth, logout } = useAuth();
 
   const [role, setRole] = useState("student");
   const [view, setView] = useState("login");
   const [activateEmail, setActivateEmail] = useState("");
 
-  // ── NEU: Navigation innerhalb der App (nach Login) ────────────────
   const [appView, setAppView] = useState("dashboard");
+
 
   console.log("Aktueller View:", view);
 
+  useEffect(() => {
+    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+
+    if (path === "/reset-password" && token) {
+      setView("reset-password");
+    }
+  }, []);
   const switchRole = (newRole) => {
     setRole(newRole);
     setView("login");
@@ -38,16 +48,16 @@ function App() {
 
     const handleLogout = () => {
       logout();
-      setAppView("dashboard"); 
+      setView("login");
     };
 
     if (isStudent) {
       if (appView === "progress") return <StudienfortschrittPage user={user} onNavigate={setAppView} />;
-      if (appView === "profile")  return <StudentProfile         user={user} onNavigate={setAppView} onLogout={handleLogout} />;
-      return                             <StudentDashboard       user={user} onNavigate={setAppView} />;
+      if (appView === "profile") return <StudentProfile user={user} onNavigate={setAppView} onLogout={handleLogout} />;
+      return <StudentDashboard user={user} onNavigate={setAppView} />;
     } else {
-      if (appView === "profile")  return <ProfessorProfile   user={user} onNavigate={setAppView} onLogout={handleLogout} />;
-      return                             <ProfessorDashboard user={user} onNavigate={setAppView} />;
+      if (appView === "profile") return <ProfessorProfile user={user} onNavigate={setAppView} onLogout={handleLogout} />;
+      return <ProfessorDashboard user={user} onNavigate={setAppView} />;
     }
   }
 
@@ -123,10 +133,19 @@ function App() {
             />
           )}
           {view === "forgot" && (
-            <ForgotView role={role} onBack={() => setView("login")} />
+            <ForgotView role={role} onBack={() => setView("login")} onSuccess={()=>setView("reset-password")} />
           )}
           {view === "success" && (
-            <SuccessView role={role} onBack={() => setView("login")} />
+            <SuccessView role={role} onBack={() => setView("login")}  />
+          )}
+          {view === "reset-password" && (
+            <ResetPasswordView
+              role={role}
+              onBack={() => {
+                window.history.replaceState({}, "", "/");
+                setView("login");
+              }}
+            />
           )}
         </div>
       </div>

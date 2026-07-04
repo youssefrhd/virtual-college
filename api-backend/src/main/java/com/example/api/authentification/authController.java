@@ -60,6 +60,7 @@ public class authController {
                       "email": "max.mustermann@vc.de",
                       "passwort": "Passwort123!",
                       "geburtsdatum": "1998-05-21",
+                      "telefon" : "00491784565123",
                       "studiengang": "Informatik",
                       "semester": 3
                     }
@@ -153,6 +154,7 @@ record StudentRegisterRequest(
         String nachname,
         String matrikelNr,
         LocalDate geburtsdatum,
+        String telefon,
         String email,
         String passwort,
         String studiengang,
@@ -166,6 +168,7 @@ record ProfessorRegisterRequest(
         String email,
         String passwort,
         LocalDate geburtsdatum,
+        String telefon,
         String titel,
         String fachbereich) {
 }

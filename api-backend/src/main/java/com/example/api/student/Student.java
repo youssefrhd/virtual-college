@@ -30,10 +30,10 @@ public class Student extends User {
 
     public Student() {
     }
-
+    
     public Student(String vorname, String nachname,String email,
-            String password,LocalDate gebDatum ,String matrikelNr,String studiengang, Integer semester) {
-        super(vorname, nachname,email, password,gebDatum, Role.STUDENT); 
+            String password,LocalDate gebDatum ,String telefon,String matrikelNr,String studiengang, Integer semester) {
+        super(vorname, nachname,email, password,gebDatum,telefon, Role.STUDENT); 
         this.matrikelNr = matrikelNr;
         this.studiengang = studiengang;
         this.semester = semester;

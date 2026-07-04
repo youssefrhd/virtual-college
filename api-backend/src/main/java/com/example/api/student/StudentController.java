@@ -1,9 +1,9 @@
 package com.example.api.student;
 
+import java.time.LocalDate;
+
 import org.springframework.http.ResponseEntity;
 
-import com.example.api.student.StudentDTO.StudentProfilResponse;
-import com.example.api.student.StudentDTO.StudentProfilUpdateRequest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -38,4 +38,22 @@ public class StudentController {
         return ResponseEntity.ok(
             studentProfilService.profilAktualisieren(student, req));
     }
+
+     public record StudentProfilResponse(
+        String vorname,
+        String nachname,
+        String email,
+        LocalDate geburtsdatum,
+        String matrikelNr,
+        String studiengang,
+        Integer semester
+    ) {}
+ 
+    public record StudentProfilUpdateRequest(
+        String vorname,
+        String nachname,
+        LocalDate geburtsdatum,
+        String studiengang,
+        Integer semester
+    ) {}
 }
