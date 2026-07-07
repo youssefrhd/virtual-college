@@ -8,7 +8,7 @@ import ActivateView from "./views/ActivateView";
 
 import StudentDashboard    from "./views/StudentDashboard";
 import ProfessorDashboard      from "./views/ProfessorDashboard";
-import StudienfortschrittPage  from "./views/StudienfortschrittPage";
+import StudienfortschrittPage  from "./views/StudienfortschrittView";
 import { StudentProfile, ProfessorProfile } from "./views/ProfilePage";
 
 import { ROLES } from "./config/roles";
@@ -33,7 +33,9 @@ function App() {
   };
 
   if (auth) {
-    const isStudent = auth.role?.toUpperCase() === "STUDENT";
+    //const isStudent = auth.role?.toUpperCase() === "STUDENT";
+    
+    const isStudent = true;
     const user = { name: auth.email?.split("@")[0] ?? "Benutzer", email: auth.email };
 
     const handleLogout = () => {

@@ -44,3 +44,16 @@ export async function passwortVergessen({ email }) {
 export async function passwortZuruecksetzen({ token, neuesPasswort }) {
   return apiFetch("/api/auth/passwort-zuruecksetzen", { token, neuesPasswort });
 }
+
+export async function fetchStudienfortschritt(token) {
+  const BASE_URL = "http://localhost:8080";
+  const res = await fetch(`${BASE_URL}/api/studienfortschritt`, {
+    method: "GET",
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}` 
+    }
+  });
+  if (!res.ok) throw new Error(`HTTP Fehler ${res.status}`);
+  return res.json();
+}
