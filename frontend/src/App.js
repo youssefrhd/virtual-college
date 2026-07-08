@@ -8,14 +8,13 @@ import ActivateView from "./views/ActivateView";
 
 import StudentDashboard from "./views/StudentDashboard";
 import ProfessorDashboard from "./views/ProfessorDashboard";
-import StudienfortschrittPage from "./views/StudienfortschrittPage";
+import StudienfortschrittView from "./views/StudienfortschrittView";
 import { StudentProfile, ProfessorProfile } from "./views/ProfilePage";
 import ResetPasswordView from "./views/ResetPasswordView";
 
 import { ROLES } from "./config/roles";
 import { useState, useEffect } from "react";
 import { useAuth } from "./context/authContext";
-import StudienfortschrittView from "./views/StudienfortschrittView";
 
 function App() {
   const { auth, logout } = useAuth();
@@ -26,9 +25,6 @@ function App() {
 
   const [appView, setAppView] = useState("dashboard");
 
-
-  console.log("Aktueller View:", view);
-
   useEffect(() => {
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
@@ -38,6 +34,7 @@ function App() {
       setView("reset-password");
     }
   }, []);
+
   const switchRole = (newRole) => {
     setRole(newRole);
     setView("login");
@@ -53,7 +50,7 @@ function App() {
     };
 
     if (isStudent) {
-      if (appView === "progress") return <StudienfortschrittPage user={user} onNavigate={setAppView} />;
+      if (appView === "progress") return <StudienfortschrittView user={user} onNavigate={setAppView} />;
       if (appView === "profile") return <StudentProfile user={user} onNavigate={setAppView} onLogout={handleLogout} />;
       return <StudentDashboard user={user} onNavigate={setAppView} />;
     } else {

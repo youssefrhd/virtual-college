@@ -94,8 +94,26 @@ export async function updateProfessorProfil(req) {
     body: JSON.stringify(req),
   });
 }
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export async function getStudienfortschritt() {
-  return apiFetch("/api/studienfortschritt", {
+  const res = await fetch(`${BASE_URL}/api/studienfortschritt`, {
     method: "GET",
+    headers: getAuthHeaders(),
   });
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error("Nicht autorisiert. Bitte erneut einloggen.");
+  }
+  if (!res.ok) {
+    throw new Error(`Studienfortschritt konnte nicht geladen werden (Status ${res.status})`);
+  }
+  return res.json();
 }
