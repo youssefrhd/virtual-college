@@ -65,7 +65,8 @@ public class SecurityConfig {
                                                                 "/api/professor/**",
                                                                 "/api/module/**",
                                                                 "/api/pruefungen/**",
-                                                                "/api/materialien/upload",
+                                                                "/api/materialien/pdf",
+                                                                "/api/materialien/link",
                                                                 "/api/materialien/delete/**")
                                                 .hasAnyRole("PROFESSOR")
 

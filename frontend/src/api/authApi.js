@@ -94,3 +94,8 @@ export async function updateProfessorProfil(req) {
     body: JSON.stringify(req),
   });
 }
+export async function getStudienfortschritt() {
+  return apiFetch("/api/studienfortschritt", {
+    method: "GET",
+  });
+}

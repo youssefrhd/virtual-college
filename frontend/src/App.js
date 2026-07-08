@@ -15,6 +15,7 @@ import ResetPasswordView from "./views/ResetPasswordView";
 import { ROLES } from "./config/roles";
 import { useState, useEffect } from "react";
 import { useAuth } from "./context/authContext";
+import StudienfortschrittView from "./views/StudienfortschrittView";
 
 function App() {
   const { auth, logout } = useAuth();

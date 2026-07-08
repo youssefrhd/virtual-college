@@ -2,61 +2,44 @@ package com.example.api.materialien;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.example.api.modul.Modul;
 
-
 @Entity
 @Table(name = "base_material")
-public abstract class BaseMaterial  {
-
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class BaseMaterial {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "material_id", nullable = false, updatable = false)
-    private UUID materialId;
+    private Long materialId;
 
-    @Column(name = "titel", nullable = false, length = 255)
+    @Column(name = "titel", nullable = false)
     private String titel;
 
-    @Column(name = "dateityp", nullable = false, length = 20)
-    private String dateityp;
-
-    @Column(name = "datei_pfad", nullable = false, length = 500)
-    private String dateiPfad;
+    @Column(name = "pfad", nullable = false)
+    private String pfad;
 
     @Column(name = "hochgeladen_am", nullable = false)
-    private LocalDate hochgeladenAm;
-
-    @Column(name = "sichtbar")
-    private Boolean sichtbar = true;
+    private LocalDateTime hochgeladenAm;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modul_id", nullable = false)
     private Modul modul;
 
-    public BaseMaterial() {
+    protected BaseMaterial() {
     }
 
-    public BaseMaterial(String titel, String dateityp, String dateiPfad,
-            Integer dateiGroesse, Modul modul) {
+    protected BaseMaterial(String titel, String pfad, Modul modul) {
         this.titel = titel;
-        this.dateityp = dateityp;
-        this.dateiPfad = dateiPfad;
-        this.hochgeladenAm = LocalDate.now();
+        this.pfad = pfad;
         this.modul = modul;
+        this.hochgeladenAm = LocalDateTime.now();
     }
 
-    
-    
-
-    @Override
-    public String toString() {
-        return "BaseMaterial [titel=" + titel + ", dateityp=" + dateityp + ", dateiPfad=" + dateiPfad
-                + ", hochgeladenAm=" + hochgeladenAm + ", modul=" + modul.getBezeichnung() + "]";
-    }
-
-    public UUID getMaterialId() {
+    public Long getMaterialId() {
         return materialId;
     }
 
@@ -64,27 +47,11 @@ public abstract class BaseMaterial  {
         return titel;
     }
 
-    public void setTitel(String titel) {
-        this.titel = titel;
+    public String getPfad() {
+        return pfad;
     }
 
-    public String getDateityp() {
-        return dateityp;
-    }
-
-    public void setDateityp(String dateityp) {
-        this.dateityp = dateityp;
-    }
-
-    public String getDateiPfad() {
-        return dateiPfad;
-    }
-
-    public void setDateiPfad(String dateiPfad) {
-        this.dateiPfad = dateiPfad;
-    }
-
-    public LocalDate getHochgeladenAm() {
+    public LocalDateTime getHochgeladenAm() {
         return hochgeladenAm;
     }
 
@@ -92,15 +59,22 @@ public abstract class BaseMaterial  {
         return modul;
     }
 
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
+
+    public void setPfad(String pfad) {
+        this.pfad = pfad;
+    }
+
+    public void setHochgeladenAm(LocalDateTime hochgeladenAm) {
+        this.hochgeladenAm = hochgeladenAm;
+    }
+
     public void setModul(Modul modul) {
         this.modul = modul;
     }
 
-    public Boolean getSichtbar() {
-        return sichtbar;
-    }
+    public abstract String getInfo();
 
-    public void setSichtbar(Boolean sichtbar) {
-        this.sichtbar = sichtbar;
-    }
 }
