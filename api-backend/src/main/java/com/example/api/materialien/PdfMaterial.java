@@ -1,5 +1,6 @@
 package com.example.api.materialien;
 
+import com.example.api.kurs.Kurs;
 import com.example.api.modul.Modul;
 
 import jakarta.persistence.Column;
@@ -15,8 +16,8 @@ public class PdfMaterial extends BaseMaterial {
     protected PdfMaterial() {
     }
 
-    public PdfMaterial(String titel, String pfad, Modul modul, int seitenAnzahl) {
-        super(titel, pfad, modul);
+    public PdfMaterial(String titel, String pfad, Kurs kurs, int seitenAnzahl) {
+        super(titel, pfad, kurs);
         this.seitenAnzahl = seitenAnzahl;
     }
 
@@ -33,4 +34,8 @@ public class PdfMaterial extends BaseMaterial {
         return "PDF: " + getTitel() + " (" + seitenAnzahl + " Seiten)";
     }
 
+     @Override
+    public String getTyp() {
+        return "PDF";
+    }
 }

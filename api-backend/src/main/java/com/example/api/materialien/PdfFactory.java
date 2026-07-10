@@ -13,7 +13,7 @@ public class PdfFactory implements LernmaterialFactory<PdfCreateData, PdfMateria
         return new PdfMaterial(
                 request.titel(),
                 request.pfad(),
-                request.modul(),
+                request.kurs(),
                 request.seitenAnzahl()
         );
     }

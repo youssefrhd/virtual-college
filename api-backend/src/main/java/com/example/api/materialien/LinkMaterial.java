@@ -1,5 +1,6 @@
 package com.example.api.materialien;
 
+import com.example.api.kurs.Kurs;
 import com.example.api.modul.Modul;
 
 import jakarta.persistence.Column;
@@ -17,8 +18,8 @@ public class LinkMaterial extends BaseMaterial{
     protected LinkMaterial() {
     }
 
-    public LinkMaterial(String titel, String url, Modul modul) {
-        super(titel, url, modul); 
+    public LinkMaterial(String titel, String url, Kurs kurs) {
+        super(titel, url, kurs); 
         this.url = url;
     }
 
@@ -34,6 +35,10 @@ public class LinkMaterial extends BaseMaterial{
     @Override
     public String getInfo() {
         return "Link: " + getTitel() + " -> " + url;
+    }
+    @Override
+    public String getTyp() {
+        return "LINK";
     }
 }
     

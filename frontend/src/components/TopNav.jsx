@@ -1,0 +1,114 @@
+import React from "react";
+
+const THEMES = {
+  student: {
+    accent: "#06b6d4",
+    accentDim: "#0891b2",
+    glow: "rgba(6,182,212,0.15)",
+  },
+  professor: {
+    accent: "#f59e0b",
+    accentDim: "#d97706",
+    glow: "rgba(245,158,11,0.18)",
+  },
+};
+
+const NAV_ITEMS = {
+  student: [
+    { label: "Dashboard", view: "dashboard" },
+    { label: "Studienfortschritt", view: "progress" },
+    { label: "Kurse", view: "kurse" },
+    { label: "Profil", view: "profile" },
+  ],
+  professor: [
+    { label: "Dashboard", view: "dashboard" },
+    { label: "Kurse", view: "kurse" },
+    { label: "Profil", view: "profile" },
+  ],
+};
+
+export default function TopNav({ role = "student", activeView, onNavigate, user }) {
+  const items = NAV_ITEMS[role] ?? NAV_ITEMS.student;
+  const theme = THEMES[role] ?? THEMES.student;
+
+  return (
+    <div
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        background: "rgba(15,23,42,0.88)",
+        backdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+        padding: "0 24px",
+        height: 60,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 8,
+            background: `linear-gradient(135deg, ${theme.accent}, ${theme.accentDim})`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+          </svg>
+        </div>
+        <span style={{ fontSize: 15, fontWeight: 700 }}>Virtual College</span>
+      </div>
+
+      <nav style={{ display: "flex", gap: 4 }}>
+        {items.map((n) => {
+          const active = n.view === activeView;
+          return (
+            <button
+              key={n.view}
+              onClick={() => onNavigate?.(n.view)}
+              style={{
+                background: active ? `${theme.accent}22` : "transparent",
+                border: active ? `1px solid ${theme.accent}55` : "1px solid transparent",
+                borderRadius: 8,
+                padding: "6px 14px",
+                color: active ? theme.accent : "rgba(255,255,255,0.45)",
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: "pointer",
+                fontFamily: "inherit",
+                transition: "all 0.2s",
+              }}
+            >
+              {n.label}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          background: theme.glow,
+          border: `2px solid ${theme.accent}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 14,
+          fontWeight: 700,
+          color: theme.accent,
+        }}
+      >
+        {(user?.name ?? "M").charAt(0)}
+      </div>
+    </div>
+  );
+}

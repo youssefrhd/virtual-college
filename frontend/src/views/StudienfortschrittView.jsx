@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { getStudienfortschritt } from "../api/authApi";
 
+
 const T = {
   bg1: "#0f172a",
   accent: "#06b6d4",
@@ -189,31 +190,6 @@ export default function StudienfortschrittView({ onNavigate, user }) {
 
   return (
     <div style={{ minHeight: "100vh", background: T.bg1, fontFamily: "inherit", color: "#fff" }}>
-      <div style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(15,23,42,0.88)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: `linear-gradient(135deg, ${T.accent}, ${T.accentDim})`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /></svg>
-          </div>
-          <span style={{ fontSize: 15, fontWeight: 700 }}>Virtual College</span>
-        </div>
-        <nav style={{ display: "flex", gap: 4 }}>
-          {[
-            { label: "Dashboard", view: "dashboard" },
-            { label: "Studienfortschritt", view: "progress", active: true },
-            { label: "Profil", view: "profile" },
-          ].map(n => (
-            <button key={n.view} onClick={() => onNavigate?.(n.view)} style={{
-              background: n.active ? "rgba(6,182,212,0.12)" : "transparent",
-              border: n.active ? `1px solid ${T.accent}33` : "1px solid transparent",
-              borderRadius: 8, padding: "6px 14px", color: n.active ? T.accent : "rgba(255,255,255,0.45)",
-              fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "inherit",
-            }}>{n.label}</button>
-          ))}
-        </nav>
-        <div style={{ width: 36, height: 36, borderRadius: "50%", background: T.accentGlow, border: `2px solid ${T.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: T.accent }}>
-          {(user?.name ?? "M").charAt(0)}
-        </div>
-      </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 24px" }}>
         <div style={{ marginBottom: 28 }}>

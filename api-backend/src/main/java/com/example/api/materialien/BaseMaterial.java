@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.example.api.kurs.Kurs;
 import com.example.api.modul.Modul;
 
 @Entity
@@ -26,16 +27,16 @@ public abstract class BaseMaterial {
     private LocalDateTime hochgeladenAm;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "modul_id", nullable = false)
-    private Modul modul;
+    @JoinColumn(name = "kurs_id", nullable = false)
+    private Kurs kurs;
 
     protected BaseMaterial() {
     }
 
-    protected BaseMaterial(String titel, String pfad, Modul modul) {
+    protected BaseMaterial(String titel, String pfad,Kurs kurs) {
         this.titel = titel;
         this.pfad = pfad;
-        this.modul = modul;
+        this.kurs=kurs;
         this.hochgeladenAm = LocalDateTime.now();
     }
 
@@ -55,9 +56,12 @@ public abstract class BaseMaterial {
         return hochgeladenAm;
     }
 
-    public Modul getModul() {
-        return modul;
+    
+
+    public Kurs getKurs() {
+        return kurs;
     }
+
 
     public void setTitel(String titel) {
         this.titel = titel;
@@ -71,10 +75,8 @@ public abstract class BaseMaterial {
         this.hochgeladenAm = hochgeladenAm;
     }
 
-    public void setModul(Modul modul) {
-        this.modul = modul;
-    }
-
+    
+     public abstract String getTyp();
     public abstract String getInfo();
 
 }
