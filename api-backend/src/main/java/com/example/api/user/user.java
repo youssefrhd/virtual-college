@@ -79,7 +79,7 @@ public abstract class User implements UserDetails {
     protected User() {
     }
 
-    protected User(String vorname, String nachname, String email,
+    public User(String vorname, String nachname, String email,
             String password, LocalDate geburtsdatum,String telefon, Role role) {
         this.vorname = vorname;
         this.nachname = nachname;

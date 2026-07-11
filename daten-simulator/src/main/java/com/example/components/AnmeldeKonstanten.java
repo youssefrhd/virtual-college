@@ -4,6 +4,6 @@ import java.time.LocalDateTime;
 
 public class AnmeldeKonstanten {
     public static final LocalDateTime ANMELDE_START =
-        LocalDateTime.now().plusMinutes(2);
+        LocalDateTime.now().plusMinutes(1);
     
 }

@@ -273,7 +273,6 @@ export function StudentProfile({ user, onNavigate, onLogout }) {
     bio: "",
   });
 
-  // NEU: Studienfortschritt-Daten für die Stat-Pills
   const [stats, setStats] = useState({
     ects: 0,
     avgGrade: 0,
@@ -303,8 +302,7 @@ export function StudentProfile({ user, onNavigate, onLogout }) {
         modulCount: bestanden + nichtBestanden + offen,
       });
     } catch (err) {
-      // Stats sind sekundär zum Profil, daher hier kein Fehler-Banner,
-      // Pills fallen einfach auf "0" zurück.
+      
       console.error("Studienfortschritt konnte nicht geladen werden:", err);
     } finally {
       setStatsLoading(false);
@@ -726,42 +724,6 @@ export function StudentProfile({ user, onNavigate, onLogout }) {
             </button>
 
             <button
-              style={{
-                width: "100%",
-                padding: "11px 16px",
-                borderRadius: 9,
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "rgba(255,255,255,0.7)",
-                fontSize: 13,
-                fontWeight: 500,
-                cursor: "pointer",
-                fontFamily: "inherit",
-                textAlign: "left",
-                marginBottom: 24,
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M18 8h1a4 4 0 010 8h-1" />
-                <path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
-                <line x1="6" y1="1" x2="6" y2="4" />
-                <line x1="10" y1="1" x2="10" y2="4" />
-                <line x1="14" y1="1" x2="14" y2="4" />
-              </svg>
-              Benachrichtigungen verwalten
-            </button>
-
-            <button
               onClick={onLogout}
               style={{
                 width: "100%",
@@ -799,9 +761,7 @@ export function StudentProfile({ user, onNavigate, onLogout }) {
     </div>
   );
 }
-/* ════════════════════════════════════════════════════════════════════════
-   PROFESSOR PROFILE
-════════════════════════════════════════════════════════════════════════ */
+
 export function ProfessorProfile({ user, onNavigate, onLogout }) {
   const role = "professor";
   const t = getT(role);
@@ -1188,7 +1148,6 @@ export function ProfessorProfile({ user, onNavigate, onLogout }) {
             <StatPill label="Aktive Kurse" value="2" accent={t.accent} />
             <StatPill label="Studierende" value="80" accent="#a78bfa" />
             <StatPill label="Materialien" value="5" accent="#22c55e" />
-            <StatPill label="Offene Abgaben" value="3" accent="#f59e0b" />
           </div>
         </div>
 
@@ -1285,41 +1244,7 @@ export function ProfessorProfile({ user, onNavigate, onLogout }) {
               </svg>
               Passwort ändern
             </button>
-            <button
-              style={{
-                width: "100%",
-                padding: "11px 16px",
-                borderRadius: 9,
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "rgba(255,255,255,0.7)",
-                fontSize: 13,
-                fontWeight: 500,
-                cursor: "pointer",
-                fontFamily: "inherit",
-                textAlign: "left",
-                marginBottom: 24,
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M18 8h1a4 4 0 010 8h-1" />
-                <path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
-                <line x1="6" y1="1" x2="6" y2="4" />
-                <line x1="10" y1="1" x2="10" y2="4" />
-                <line x1="14" y1="1" x2="14" y2="4" />
-              </svg>
-              Benachrichtigungen verwalten
-            </button>
+            
             <button
               onClick={onLogout}
               style={{

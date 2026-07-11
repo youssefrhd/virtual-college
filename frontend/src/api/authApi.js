@@ -223,3 +223,54 @@ export async function downloadMaterial(materialId) {
 export async function getMaterialById(materialId) {
   return apiFetch(`/api/materialien/${materialId}`, { method: "GET" });
 }
+export async function deleteMaterial(materialId) {
+  return apiFetch(`/api/materialien/${materialId}`, { method: "DELETE" });
+}
+
+export async function getBenachrichtigungen() {
+  return apiFetch("/api/benachrichtigungen", { method: "GET" });
+}
+
+export async function getUngeleseneCount() {
+  return apiFetch("/api/benachrichtigungen/ungelesen/count", { method: "GET" });
+}
+
+export async function markiereAlsGelesen(id) {
+  return apiFetch(`/api/benachrichtigungen/${id}/gelesen`, { method: "PATCH" });
+}
+
+export async function markiereAlleAlsGelesen() {
+  return apiFetch("/api/benachrichtigungen/alle-gelesen", { method: "PATCH" });
+}
+
+export async function downloadStudienfortschrittPdf() {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/studienfortschritt/export/pdf`, {
+    method: "GET",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`;
+    try {
+      const data = await res.json();
+      message = data?.message || message;
+    } catch {
+    }
+    throw new Error(message);
+  }
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "studienfortschritt.pdf";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}
