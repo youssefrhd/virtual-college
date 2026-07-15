@@ -71,7 +71,7 @@ function App() {
       } else if (appView === "profile") {
         content = <StudentProfile user={user} onLogout={handleLogout} />;
       } else {
-        content = <StudentDashboard user={user} />;
+        content = <StudienfortschrittView user={user} />;
       }
     } else {
       if (appView === "kurse") {

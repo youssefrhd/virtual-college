@@ -7,7 +7,6 @@ const T_GLOW = "rgba(6,182,212,0.15)";
 
 const NAV_ITEMS = {
   student: [
-    { label: "Dashboard", view: "dashboard" },
     { label: "Studienfortschritt", view: "progress" },
     { label: "Kurse", view: "kurse" },
     { label: "Profil", view: "profile" },
