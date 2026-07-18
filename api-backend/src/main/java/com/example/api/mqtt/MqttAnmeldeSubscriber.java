@@ -32,21 +32,29 @@ public class MqttAnmeldeSubscriber {
 
         log.info("[MQTT-IN] Parsed Payload: '{}'", payload);
 
-        if ("anmeldung_gestartet".equalsIgnoreCase(payload)) {
+        switch (payload) {
 
-            log.info("[MQTT-IN] Trigger erkannt → sende Notifications");
+            case "anmeldung_gestartet" -> {
+                log.info("[MQTT-IN] Trigger erkannt → sende Notifications");
 
-            try {
-                benachrichtigungService.sendeAnmeldestartAnAlleStudenten();
-                log.info("[MQTT-IN] Notifications erfolgreich gesendet");
-            } catch (Exception e) {
-                log.error("[MQTT-IN] Fehler beim Senden der Notifications", e);
+                try {
+                    benachrichtigungService.sendeAnmeldestartAnAlleStudenten();
+                    log.info("[MQTT-IN] Notifications erfolgreich gesendet");
+                } catch (Exception e) {
+                    log.error("[MQTT-IN] Fehler beim Senden der Notifications", e);
+                }
             }
 
-        } else {
+            case "anmeldung_endet_bald" -> {
+                benachrichtigungService.sendeAnmeldeendeErinnerungAnAlleStudenten();
+                log.info("Anmeldeende-Erinnerungen gesendet.");
+            }
+
+            default ->
             log.warn("[MQTT-IN] Unbekannte MQTT Nachricht: {}", payload);
         }
 
+       
         log.info("====================================");
     }
 }

@@ -1,16 +1,17 @@
 import Background from "./layout/Background";
 import TopNav from "./components/TopNav";
 
+import HomeView from "./views/HomeView";
 import LoginView from "./views/LoginView";
 import RegisterView from "./views/RegisterView";
 import ForgotView from "./views/ForgotView";
 import SuccessView from "./views/SuccessView";
 import ActivateView from "./views/ActivateView";
 
-import StudentDashboard from "./views/StudentDashboard";
 import ProfessorDashboard from "./views/ProfessorDashboard";
 import StudienfortschrittView from "./views/StudienfortschrittView";
 import KurseView from "./views/KurseView";
+import PruefungsanmeldungView from "./views/PruefungsanmeldungView";
 import { StudentProfile, ProfessorProfile } from "./views/ProfilePage";
 import ResetPasswordView from "./views/ResetPasswordView";
 
@@ -22,7 +23,7 @@ function App() {
   const { auth, logout } = useAuth();
 
   const [role, setRole] = useState("student");
-  const [view, setView] = useState("login");
+  const [view, setView] = useState("home");
   const [activateEmail, setActivateEmail] = useState("");
   const [appView, setAppView] = useState("dashboard");
 
@@ -41,13 +42,15 @@ function App() {
     setView("login");
   };
 
-  /* =========================
-     EINGELOGGTER BEREICH
-     ========================= */
+  const enterFromHome = (chosenRole, chosenView) => {
+    setRole(chosenRole);
+    setView(chosenView);
+  };
+
+
   if (auth) {
     const isStudent = auth.role?.toUpperCase() === "STUDENT";
     const isProfessor = auth.role?.toUpperCase() === "PROFESSOR";
-
     const portalRole = isProfessor ? "professor" : "student";
 
     const user = {
@@ -57,7 +60,13 @@ function App() {
 
     const handleLogout = () => {
       logout();
-      setView("login");
+      setView("home");
+      setAppView("dashboard");
+    };
+
+    const handleLogoClick = () => {
+      logout();
+      setView("home");
       setAppView("dashboard");
     };
 
@@ -68,6 +77,8 @@ function App() {
         content = <StudienfortschrittView user={user} />;
       } else if (appView === "kurse") {
         content = <KurseView user={user} isProfessor={false} />;
+      } else if (appView === "anmeldung") {
+        content = <PruefungsanmeldungView user={user} onNavigate={setAppView} />;
       } else if (appView === "profile") {
         content = <StudentProfile user={user} onLogout={handleLogout} />;
       } else {
@@ -90,18 +101,19 @@ function App() {
           activeView={appView}
           onNavigate={setAppView}
           user={user}
+          onLogoClick={handleLogoClick}
         />
-
-        <div style={{ paddingTop: 0 }}>
-          {content}
-        </div>
+        <div style={{ paddingTop: 0 }}>{content}</div>
       </div>
     );
   }
 
-  /* =========================
-     NICHT EINGELOGGT
-     ========================= */
+  
+
+  if (view === "home") {
+    return <HomeView onEnter={enterFromHome} />;
+  }
+
   return (
     <>
       <style>{`
@@ -132,22 +144,26 @@ function App() {
 
       <Background role={role} />
 
-      <div
+      <button
+        onClick={() => setView("home")}
         style={{
-          position: "fixed",
-          top: 20,
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 10,
-          display: "flex",
-          gap: 4,
-          background: "rgba(0,0,0,0.35)",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: 50,
-          padding: "4px 6px"
+          position: "fixed", top: 20, left: 24, zIndex: 11,
+          background: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)",
+          border: "1px solid rgba(255,255,255,0.1)", borderRadius: 50,
+          padding: "8px 16px", color: "rgba(255,255,255,0.6)",
+          fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+          display: "flex", alignItems: "center", gap: 6,
         }}
       >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        Zurück
+      </button>
+
+      <div style={{
+        position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", zIndex: 10,
+        display: "flex", gap: 4, background: "rgba(0,0,0,0.35)", backdropFilter: "blur(12px)",
+        border: "1px solid rgba(255,255,255,0.1)", borderRadius: 50, padding: "4px 6px",
+      }}>
         {["student", "professor"].map((r) => {
           const active = r === role;
           const tk = ROLES[r];
@@ -156,16 +172,10 @@ function App() {
               key={r}
               onClick={() => switchRole(r)}
               style={{
-                padding: "6px 16px",
-                borderRadius: 50,
-                border: "none",
-                cursor: "pointer",
+                padding: "6px 16px", borderRadius: 50, border: "none", cursor: "pointer",
                 background: active ? tk.accent : "transparent",
                 color: active ? "#fff" : "rgba(255,255,255,0.45)",
-                fontSize: 12,
-                fontWeight: 600,
-                fontFamily: "inherit",
-                transition: "all 0.25s",
+                fontSize: 12, fontWeight: 600, fontFamily: "inherit", transition: "all 0.25s",
                 textTransform: "capitalize",
               }}
             >
@@ -175,17 +185,10 @@ function App() {
         })}
       </div>
 
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "80px 20px 40px",
-          position: "relative",
-          zIndex: 1
-        }}
-      >
+      <div style={{
+        minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "80px 20px 40px", position: "relative", zIndex: 1,
+      }}>
         <div key={role + view} className="card-enter" style={{ width: "100%", maxWidth: 420 }}>
           {view === "login" && (
             <LoginView
@@ -241,19 +244,11 @@ function App() {
         </div>
       </div>
 
-      <div
-        style={{
-          position: "fixed",
-          bottom: 16,
-          left: "50%",
-          transform: "translateX(-50%)",
-          fontSize: 11,
-          color: "rgba(255,255,255,0.2)",
-          zIndex: 10,
-          letterSpacing: "0.06em",
-          whiteSpace: "nowrap"
-        }}
-      >
+      <div style={{
+        position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)",
+        fontSize: 11, color: "rgba(255,255,255,0.2)", zIndex: 10,
+        letterSpacing: "0.06em", whiteSpace: "nowrap",
+      }}>
         Virtual College · SWT2
       </div>
     </>

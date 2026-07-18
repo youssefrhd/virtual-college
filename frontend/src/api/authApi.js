@@ -274,3 +274,21 @@ export async function downloadStudienfortschrittPdf() {
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 }
+
+/* ── Prüfungsanmeldung ───────────────────────────────────────────────── */
+
+export async function getVerfuegbarePruefungen() {
+  return apiFetch("/api/pruefungsanmeldungen/verfuegbar", { method: "GET" });
+}
+
+export async function getMeineAnmeldungen() {
+  return apiFetch("/api/pruefungsanmeldungen/meine", { method: "GET" });
+}
+
+export async function pruefungAnmelden(pruefungId) {
+  return apiFetch(`/api/pruefungsanmeldungen/${pruefungId}`, { method: "POST" });
+}
+
+export async function pruefungAbmelden(pruefungId) {
+  return apiFetch(`/api/pruefungsanmeldungen/${pruefungId}`, { method: "DELETE" });
+}

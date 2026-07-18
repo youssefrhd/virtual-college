@@ -9,6 +9,7 @@ const NAV_ITEMS = {
   student: [
     { label: "Studienfortschritt", view: "progress" },
     { label: "Kurse", view: "kurse" },
+    { label: "Prüfungsanmeldung", view: "anmeldung" },
     { label: "Profil", view: "profile" },
   ],
   professor: [
@@ -18,7 +19,7 @@ const NAV_ITEMS = {
   ],
 };
 
-export default function TopNav({ role = "student", activeView, onNavigate, user }) {
+export default function TopNav({ role = "student", activeView, onNavigate, user, onLogoClick }) {
   const items = NAV_ITEMS[role] ?? NAV_ITEMS.student;
 
   return (
@@ -29,7 +30,15 @@ export default function TopNav({ role = "student", activeView, onNavigate, user 
       padding: "0 24px", height: 60,
       display: "flex", alignItems: "center", justifyContent: "space-between",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <button
+        onClick={onLogoClick}
+        title="Zur Startseite"
+        style={{
+          display: "flex", alignItems: "center", gap: 10,
+          background: "transparent", border: "none", cursor: onLogoClick ? "pointer" : "default",
+          padding: 0, fontFamily: "inherit",
+        }}
+      >
         <div style={{
           width: 30, height: 30, borderRadius: 8,
           background: `linear-gradient(135deg, ${T_ACCENT}, ${T_ACCENT_DIM})`,
@@ -39,8 +48,8 @@ export default function TopNav({ role = "student", activeView, onNavigate, user 
             <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
           </svg>
         </div>
-        <span style={{ fontSize: 15, fontWeight: 700 }}>Virtual College</span>
-      </div>
+        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Virtual College</span>
+      </button>
 
       <nav style={{ display: "flex", gap: 4 }}>
         {items.map((n) => {

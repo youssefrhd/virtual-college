@@ -53,7 +53,8 @@ public class MqttSubscriberConfig {
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
                 clientId,
                 mqttClientFactory(),
-                topic);
+                 "exams/registration/opened",  
+                "exams/registration/reminder");
 
         adapter.setCompletionTimeout(5000);
         adapter.setQos(1);
