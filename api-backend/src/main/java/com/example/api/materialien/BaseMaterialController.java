@@ -37,25 +37,26 @@ public class BaseMaterialController {
     }
 
     @PostMapping(value = "/pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('PROFESSOR')")
     @Operation(summary = "PDF-Material hochladen")
     public ResponseEntity<PdfMaterialResponse> createPdf(
             @RequestParam("titel") String titel,
             @RequestParam("kursId") UUID kursId,
-            @RequestParam("datei") MultipartFile datei
-    ) throws IOException {
+            @RequestParam("datei") MultipartFile datei) throws IOException {
 
         PdfMaterialRequest request = new PdfMaterialRequest(titel, kursId, datei);
         return ResponseEntity.ok(service.pdfMaterialAnlegen(request));
     }
 
     @PostMapping(value = "/link")
+    @PreAuthorize("hasRole('PROFESSOR')")
+
     @Operation(summary = "Link-Material anlegen")
     public ResponseEntity<LinkMaterialResponse> createLink(
             @RequestParam("titel") String titel,
             @RequestParam("url") String url,
-            @RequestParam("kursId") UUID kursId
-    ) {
-                LinkMaterialRequest request = new LinkMaterialRequest(titel, url, kursId);
+            @RequestParam("kursId") UUID kursId) {
+        LinkMaterialRequest request = new LinkMaterialRequest(titel, url, kursId);
 
         return ResponseEntity.ok(service.linkMaterialAnlegen(request));
     }

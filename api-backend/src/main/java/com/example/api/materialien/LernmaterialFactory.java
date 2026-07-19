@@ -1,7 +1,6 @@
 package com.example.api.materialien;
 
-import com.example.api.modul.Modul;
+public abstract class LernmaterialFactory<T, R extends BaseMaterial> {
 
-public interface LernmaterialFactory<T, R extends BaseMaterial> {
-    R create(T request);
+    public abstract R create(T request);
 }

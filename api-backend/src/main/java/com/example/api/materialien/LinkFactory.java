@@ -6,7 +6,7 @@ import com.example.api.materialien.MaterialDTO.LinkCreateData;
 
 
 @Component
-public class LinkFactory implements LernmaterialFactory<LinkCreateData, LinkMaterial> {
+public class LinkFactory extends LernmaterialFactory<LinkCreateData, LinkMaterial> {
 
     @Override
     public LinkMaterial create(LinkCreateData request) {
