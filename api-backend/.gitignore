@@ -6,3 +6,7 @@ target/
 *.log
 
 src/main/resources/application.properties
+
+api-backend/src/main/resources/
+
+src/main/resources/

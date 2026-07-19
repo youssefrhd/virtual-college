@@ -1,27 +1,49 @@
 
-const BASE_URL = "http://localhost:8080"
+const BASE_URL = "http://localhost:8080";
 
-async function apiFetch(path, options={}) {
-  if(!BASE_URL){
-    throw new Error("Ein Fehler in BASE_URL !");
+async function apiFetch(path, options = {}) {
+  if (!BASE_URL) {
+    throw new Error("Ein Fehler in BASE_URL!");
   }
+
   const token = localStorage.getItem("token");
+  const isFormData = options.body instanceof FormData;
+
+  const headers = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers || {}),
+  };
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
 
   const res = await fetch(`${BASE_URL}${path}`, {
-    method: options.method ,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
+    method: options.method || "GET",
+    headers,
     body: options.body,
   });
 
-  const data = await res.json().catch(() => ({}));
+  if (res.status === 204) {
+    return null;
+  }
+
+  const contentType = res.headers.get("content-type") || "";
+  let data = {};
+
+  if (contentType.includes("application/json")) {
+    data = await res.json().catch(() => ({}));
+  } else {
+    data = await res.text().catch(() => "");
+  }
 
   if (!res.ok) {
     console.error("API error:", res.status, data);
-    throw new Error(data?.message || `HTTP ${res.status}`);
+    const msg =
+      typeof data === "object"
+        ? data?.message || data?.error || `HTTP ${res.status}`
+        : data || `HTTP ${res.status}`;
+    throw new Error(msg);
   }
 
   return data;
@@ -95,10 +117,10 @@ export async function updateProfessorProfil(req) {
   });
 }
 
-function getAuthHeaders() {
+function getAuthHeaders(isJson = true) {
   const token = localStorage.getItem("token");
   return {
-    "Content-Type": "application/json",
+    ...(isJson ? { "Content-Type": "application/json" } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
@@ -116,4 +138,157 @@ export async function getStudienfortschritt() {
     throw new Error(`Studienfortschritt konnte nicht geladen werden (Status ${res.status})`);
   }
   return res.json();
+}
+
+export async function getAllKurse() {
+  return apiFetch("/api/kurse", { method: "GET" });
+}
+
+export async function getKurs(kursId) {
+  return apiFetch(`/api/kurse/${kursId}`, { method: "GET" });
+}
+
+export async function createKurs(req) {
+  return apiFetch("/api/kurse/kurs-anlegen", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
+export async function deleteKurs(kursId) {
+  return apiFetch(`/api/kurse/${kursId}`, { method: "DELETE" });
+}
+
+export async function getMaterialienByKurs(kursId) {
+  return apiFetch(`/api/materialien/kurs/${kursId}`, { method: "GET" });
+}
+
+export async function createPdfMaterial({ titel, kursId, datei }) {
+  const formData = new FormData();
+  formData.append("titel", titel);
+  formData.append("kursId", kursId);
+  formData.append("datei", datei);
+
+  return apiFetch("/api/materialien/pdf", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function createLinkMaterial({ titel, url, kursId }) {
+  const params = new URLSearchParams({ titel, url, kursId });
+  return apiFetch(`/api/materialien/link?${params.toString()}`, {
+    method: "POST",
+  });
+}
+
+export async function downloadMaterial(materialId) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/materialien/${materialId}/download`, {
+    method: "GET",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error("Nicht autorisiert. Bitte erneut einloggen.");
+  }
+
+  if (!res.ok) {
+    throw new Error(`Download fehlgeschlagen (Status ${res.status})`);
+  }
+
+  const blob = await res.blob();
+
+  const disposition = res.headers.get("Content-Disposition") || "";
+  let filename = "material.pdf";
+
+  const match = disposition.match(/filename="(.+)"/);
+  if (match && match[1]) {
+    filename = match[1];
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+export async function getMaterialById(materialId) {
+  return apiFetch(`/api/materialien/${materialId}`, { method: "GET" });
+}
+export async function deleteMaterial(materialId) {
+  return apiFetch(`/api/materialien/${materialId}`, { method: "DELETE" });
+}
+
+export async function getBenachrichtigungen() {
+  return apiFetch("/api/benachrichtigungen", { method: "GET" });
+}
+
+export async function getUngeleseneCount() {
+  return apiFetch("/api/benachrichtigungen/ungelesen/count", { method: "GET" });
+}
+
+export async function markiereAlsGelesen(id) {
+  return apiFetch(`/api/benachrichtigungen/${id}/gelesen`, { method: "PATCH" });
+}
+
+export async function markiereAlleAlsGelesen() {
+  return apiFetch("/api/benachrichtigungen/alle-gelesen", { method: "PATCH" });
+}
+
+export async function downloadStudienfortschrittPdf() {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/studienfortschritt/export/pdf`, {
+    method: "GET",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`;
+    try {
+      const data = await res.json();
+      message = data?.message || message;
+    } catch {
+    }
+    throw new Error(message);
+  }
+
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "studienfortschritt.pdf";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}
+
+/* ── Prüfungsanmeldung ───────────────────────────────────────────────── */
+
+export async function getVerfuegbarePruefungen() {
+  return apiFetch("/api/pruefungsanmeldungen/verfuegbar", { method: "GET" });
+}
+
+export async function getMeineAnmeldungen() {
+  return apiFetch("/api/pruefungsanmeldungen/meine", { method: "GET" });
+}
+
+export async function pruefungAnmelden(pruefungId) {
+  return apiFetch(`/api/pruefungsanmeldungen/${pruefungId}`, { method: "POST" });
+}
+
+export async function pruefungAbmelden(pruefungId) {
+  return apiFetch(`/api/pruefungsanmeldungen/${pruefungId}`, { method: "DELETE" });
 }

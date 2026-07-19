@@ -6,16 +6,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.example.api.kurs.Kurs;
+import com.example.api.kurs.KursRepository;
+import com.example.api.materialien.MaterialDTO.DownloadedMaterial;
 import com.example.api.materialien.MaterialDTO.LinkCreateData;
 import com.example.api.materialien.MaterialDTO.LinkMaterialRequest;
 import com.example.api.materialien.MaterialDTO.LinkMaterialResponse;
+import com.example.api.materialien.MaterialDTO.MaterialListResponse;
 import com.example.api.materialien.MaterialDTO.PdfCreateData;
 import com.example.api.materialien.MaterialDTO.PdfMaterialRequest;
 import com.example.api.materialien.MaterialDTO.PdfMaterialResponse;
@@ -26,19 +33,19 @@ import com.example.api.modul.ModulRepository;
 public class LernmaterialService {
 
     private final BaseMaterialRepository materialRepository;
-    private final ModulRepository modulRepository;
+    private final KursRepository kursRepository;
     private final PdfFactory pdfFactory;
     private final LinkFactory linkFactory;
 
-    @Value("${material.upload-dir}") 
+    @Value("${material.upload-dir}")
     private String uploadDir;
 
     public LernmaterialService(BaseMaterialRepository materialRepository,
-            ModulRepository modulRepository,
+            KursRepository kursRepository,
             PdfFactory pdfFactory,
             LinkFactory linkFactory) {
         this.materialRepository = materialRepository;
-        this.modulRepository = modulRepository;
+        this.kursRepository = kursRepository;
         this.pdfFactory = pdfFactory;
         this.linkFactory = linkFactory;
     }
@@ -48,7 +55,7 @@ public class LernmaterialService {
             throw new IllegalArgumentException("Titel darf nicht leer sein.");
         }
 
-        if (request.modulId() == null) {
+        if (request.kursId() == null) {
             throw new IllegalArgumentException("Modul-ID darf nicht leer sein.");
         }
 
@@ -61,12 +68,11 @@ public class LernmaterialService {
             throw new IllegalArgumentException("Es sind nur PDF-Dateien erlaubt.");
         }
 
-        Modul modul = modulRepository.findById(request.modulId())
-                .orElseThrow(() -> new IllegalArgumentException("Modul nicht gefunden: " + request.modulId()));
+        Kurs kurs = kursRepository.findById(request.kursId())
+                .orElseThrow(() -> new IllegalArgumentException("Kurs nicht gefunden: " + request.kursId()));
 
-        Path uploadPath = Paths.get(uploadDir,modul.getModulId()+"");
+        Path uploadPath = Paths.get(uploadDir, kurs.getKursId() + "");
         Files.createDirectories(uploadPath);
-
 
         String dateiname = System.currentTimeMillis() + "_" + originalFilename;
         Path zielpfad = uploadPath.resolve(dateiname);
@@ -81,7 +87,7 @@ public class LernmaterialService {
         PdfCreateData createData = new PdfCreateData(
                 request.titel(),
                 zielpfad.toString(),
-                seitenAnzahl,modul);
+                seitenAnzahl, kurs);
 
         PdfMaterial material = pdfFactory.create(createData);
         PdfMaterial gespeichert = (PdfMaterial) materialRepository.save(material);
@@ -98,17 +104,17 @@ public class LernmaterialService {
             throw new IllegalArgumentException("URL darf nicht leer sein.");
         }
 
-        if (request.modulId() == null) {
+        if (request.kursId() == null) {
             throw new IllegalArgumentException("Modul-ID darf nicht leer sein.");
         }
 
-        Modul modul = modulRepository.findById(request.modulId())
-                .orElseThrow(() -> new IllegalArgumentException("Modul nicht gefunden: " + request.modulId()));
-        
+        Kurs kurs = kursRepository.findById(request.kursId())
+                .orElseThrow(() -> new IllegalArgumentException("Kurs nicht gefunden: " + request.kursId()));
+
         LinkCreateData createData = new LinkCreateData(
                 request.titel(),
                 request.url(),
-                modul);
+                kurs);
 
         LinkMaterial material = linkFactory.create(createData);
         LinkMaterial gespeichert = (LinkMaterial) materialRepository.save(material);
@@ -123,8 +129,8 @@ public class LernmaterialService {
                 "PDF",
                 material.getPfad(),
                 material.getHochgeladenAm(),
-                material.getModul().getModulId(),
-                material.getModul().getBezeichnung(),
+                material.getKurs().getKursId(),
+                material.getKurs().getTitel(),
                 material.getSeitenAnzahl());
     }
 
@@ -134,8 +140,92 @@ public class LernmaterialService {
                 material.getTitel(),
                 "LINK",
                 material.getUrl(),
-                material.getHochgeladenAm(),
-                material.getModul().getModulId(),
-                material.getModul().getBezeichnung());
+                material.getHochgeladenAm());
     }
+
+    public MaterialDTO.LinkMaterialResponse getLinkMaterialById(Long materialId) {
+        BaseMaterial material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new IllegalArgumentException("Material nicht gefunden: " + materialId));
+
+                
+        return toLinkResponse((LinkMaterial)material);
+    }
+
+    public List<MaterialListResponse> getMaterialienVonKurs(UUID kursId) {
+        return materialRepository.findByKurs_KursId(kursId)
+                .stream()
+                .map(m -> new MaterialListResponse(
+                        m.getMaterialId(),
+                        m.getTitel(),
+                        m.getTyp(),
+                        m.getHochgeladenAm()))
+                .toList();
+    }
+
+
+    public void materialLoeschen(Long materialId) {
+        BaseMaterial material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new IllegalArgumentException("Material nicht gefunden: " + materialId));
+
+        if (material instanceof PdfMaterial) {
+            try {
+                Files.deleteIfExists(Paths.get(material.getPfad()));
+            } catch (IOException ignored) {
+            }
+        }
+
+        materialRepository.delete(material);
+    }
+
+    public DownloadedMaterial downloadMaterial(Long materialId) throws IOException {
+        BaseMaterial material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new IllegalArgumentException("Material nicht gefunden: " + materialId));
+
+        if (!(material instanceof PdfMaterial pdfMaterial)) {
+            throw new IllegalArgumentException("Download ist nur für PDF-Material erlaubt.");
+        }
+
+        Path path = Paths.get(pdfMaterial.getPfad());
+        if (!Files.exists(path)) {
+            throw new IllegalArgumentException("Datei nicht gefunden: " + pdfMaterial.getPfad());
+        }
+
+        Resource resource = new org.springframework.core.io.UrlResource(path.toUri());
+
+        return new DownloadedMaterial(
+                resource,
+                path.getFileName().toString(),
+                MediaType.APPLICATION_PDF);
+    }
+
+    private MaterialDTO.MaterialResponse toMaterialResponse(BaseMaterial material) {
+        if (material instanceof PdfMaterial pdf) {
+            return new MaterialDTO.MaterialResponse(
+                    pdf.getMaterialId(),
+                    pdf.getTitel(),
+                    "PDF",
+                    pdf.getPfad(),
+                    null,
+                    pdf.getHochgeladenAm(),
+                    pdf.getKurs().getKursId(),
+                    pdf.getKurs().getTitel(),
+                    pdf.getSeitenAnzahl());
+        }
+
+        if (material instanceof LinkMaterial link) {
+            return new MaterialDTO.MaterialResponse(
+                    link.getMaterialId(),
+                    link.getTitel(),
+                    "LINK",
+                    null,
+                    link.getUrl(),
+                    link.getHochgeladenAm(),
+                    link.getKurs().getKursId(),
+                    link.getKurs().getTitel(),
+                    null);
+        }
+
+        throw new IllegalStateException("Unbekannter Materialtyp");
+    }
+
 }

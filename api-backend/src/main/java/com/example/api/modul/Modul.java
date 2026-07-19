@@ -1,11 +1,11 @@
 package com.example.api.modul;
 
-
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.api.kurs.Kurs;
 import com.example.api.materialien.BaseMaterial;
 import com.example.api.professor.Professor;
 import com.example.api.prufung.Pruefung;
@@ -38,31 +38,76 @@ public class Modul {
     @OneToMany(mappedBy = "modul", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pruefung> pruefungen = new ArrayList<>();
 
-    @OneToMany(mappedBy = "modul", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BaseMaterial> materialien = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "kurs_id")
+    private Kurs kurs;
 
-    public Modul() {}
-
-    public Modul(String bezeichnung, Integer ects, Integer semester,
-                 Boolean istPflicht, Professor professor) {
-        this.bezeichnung = bezeichnung;
-        this.ects        = ects;
-        this.semester    = semester;
-        this.istPflicht  = istPflicht;
-        this.professor   = professor;
+    public Modul() {
     }
 
-    public UUID             getModulId()                         { return modulId; }
-    public String           getBezeichnung()                     { return bezeichnung; }
-    public void             setBezeichnung(String bezeichnung)   { this.bezeichnung = bezeichnung; }
-    public Integer          getEcts()                            { return ects; }
-    public void             setEcts(Integer ects)                { this.ects = ects; }
-    public Integer          getSemester()                        { return semester; }
-    public void             setSemester(Integer semester)        { this.semester = semester; }
-    public Boolean          getIstPflicht()                      { return istPflicht; }
-    public void             setIstPflicht(Boolean istPflicht)    { this.istPflicht = istPflicht; }
-    public Professor        getProfessor()                       { return professor; }
-    public void             setProfessor(Professor professor)    { this.professor = professor; }
-    public List<Pruefung>   getPruefungen()                      { return pruefungen; }
-    public List<BaseMaterial> getMaterialien()                   { return materialien; }
+    public Modul(String bezeichnung, Integer ects, Integer semester,
+            Boolean istPflicht, Professor professor, Kurs kurs) {
+        this.bezeichnung = bezeichnung;
+        this.ects = ects;
+        this.semester = semester;
+        this.istPflicht = istPflicht;
+        this.professor = professor;
+        this.kurs = kurs;
+    }
+
+    public UUID getModulId() {
+        return modulId;
+    }
+
+    public String getBezeichnung() {
+        return bezeichnung;
+    }
+
+    public void setBezeichnung(String bezeichnung) {
+        this.bezeichnung = bezeichnung;
+    }
+
+    public Integer getEcts() {
+        return ects;
+    }
+
+    public void setEcts(Integer ects) {
+        this.ects = ects;
+    }
+
+    public Integer getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Integer semester) {
+        this.semester = semester;
+    }
+
+    public Boolean getIstPflicht() {
+        return istPflicht;
+    }
+
+    public void setIstPflicht(Boolean istPflicht) {
+        this.istPflicht = istPflicht;
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
+    }
+
+    public List<Pruefung> getPruefungen() {
+        return pruefungen;
+    }
+
+    public Kurs getKurs() {
+        return kurs;
+    }
+
+    public void setKurs(Kurs kurs) {
+        this.kurs = kurs;
+    }
 }

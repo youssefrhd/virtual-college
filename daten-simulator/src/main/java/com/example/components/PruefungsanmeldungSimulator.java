@@ -20,4 +20,10 @@ public class PruefungsanmeldungSimulator extends SimuliertePruefung {
             notifyObservers();
         }
     }
+
+     public void pruefeErinnerung() {
+        if (!LocalDateTime.now().isBefore(AnmeldeKonstanten.ERINNERUNGS_ZEITPUNKT)) {
+            notifyErinnerung();
+        }
+    }
 }

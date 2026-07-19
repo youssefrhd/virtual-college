@@ -25,5 +25,9 @@ public abstract class SimuliertePruefung {
             o.update();
         });
     }
+
+    protected void notifyErinnerung() {
+        observers.forEach(AnmeldeObserver::updateErinnerung);
+    }
     
 }

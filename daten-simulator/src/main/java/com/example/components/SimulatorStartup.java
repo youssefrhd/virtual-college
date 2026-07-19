@@ -37,5 +37,12 @@ public class SimulatorStartup implements ApplicationRunner {
                 AnmeldeKonstanten.ANMELDE_START
                         .atZone(ZoneId.systemDefault())
                         .toInstant());
+        
+
+        taskScheduler.schedule(
+            simulator::pruefeErinnerung,
+            AnmeldeKonstanten.ERINNERUNGS_ZEITPUNKT
+                .atZone(ZoneId.systemDefault()).toInstant()
+        );
     }
 }

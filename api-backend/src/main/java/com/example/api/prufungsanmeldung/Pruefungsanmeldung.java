@@ -1,8 +1,6 @@
 package com.example.api.prufungsanmeldung;
 
-
 import jakarta.persistence.*;
-
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,11 +11,10 @@ import com.example.api.benachrichtigung.Benachrichtigung;
 import com.example.api.prufung.Pruefung;
 import com.example.api.student.Student;
 
-
 @Entity
 @Table(name = "pruefungsanmeldung", uniqueConstraints = @UniqueConstraint(columnNames = { "student_id",
         "pruefung_id" }))
-public class Pruefungsanmeldung  {
+public class Pruefungsanmeldung {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -54,7 +51,6 @@ public class Pruefungsanmeldung  {
     @JoinColumn(name = "pruefung_id", nullable = false)
     private Pruefung pruefung;
 
-   
     public enum Status {
         ANGEMELDET, ABGEMELDET
     }
@@ -68,11 +64,12 @@ public class Pruefungsanmeldung  {
         this.anmeldeDatum = LocalDate.now();
     }
 
-
-
-
     public UUID getAnmeldungId() {
         return anmeldungId;
+    }
+
+    public void setStatusInternal(Status status) {
+        this.status = status;
     }
 
     public LocalDate getAnmeldeDatum() {
@@ -128,12 +125,35 @@ public class Pruefungsanmeldung  {
     public LocalDate getEingetragenAm() {
         return eingetragenAm;
     }
-     public Integer getVersuchNr() {
+
+    public Integer getVersuchNr() {
         return versuchNr;
     }
 
     public void setVersuchNr(Integer versuchNr) {
         this.versuchNr = versuchNr;
+    }
+
+    public record PruefungMitAnmeldungResponse(
+            UUID pruefungId,
+            String bezeichnung,
+            LocalDate datum,
+            LocalDate anmeldungStart,
+            LocalDate anmeldungEnde,
+            String raum,
+            String pruefungstyp,
+            String modulBezeichnung,
+            UUID anmeldungId,
+            String anmeldungStatus,
+            boolean anmeldungMoeglich) {
+    }
+
+    public record AnmeldungResponse(
+            UUID anmeldungId,
+            UUID pruefungId,
+            String pruefungsBezeichnung,
+            LocalDate anmeldeDatum,
+            String status) {
     }
 
 }

@@ -71,9 +71,7 @@ public class SecurityConfig {
                                                 .hasAnyRole("PROFESSOR")
 
                                                 .requestMatchers(
-                                                                "/api/noten/**",
-                                                                "/api/pruefungsanmeldungen/**",
-                                                                "/api/materialien/download/**",
+                                                                "/{materialId}/download",
                                                                 "/api/benachrichtigungen/**")
                                                 .hasAnyRole("STUDENT", "PROFESSOR")
 
