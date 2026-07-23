@@ -38,7 +38,7 @@ public class Modul {
     @OneToMany(mappedBy = "modul", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pruefung> pruefungen = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kurs_id")
     private Kurs kurs;
 

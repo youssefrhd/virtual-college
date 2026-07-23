@@ -119,3 +119,25 @@ $RECYCLE.BIN/
 
 frontend/node_modules/
 frontend/build/
+
+# Docker Compose
+docker-compose.yml
+docker-compose.yaml
+
+# Dockerfiles
+api-backend/Dockerfile
+daten-simulator/Dockerfile
+frontend/Dockerfile
+Dockerfile
+# Docker Ignore
+api-backend/.dockerignore
+daten-simulator/.dockerignore
+frontend/.dockerignore
+
+# Mosquitto
+mosquitto/
+mosquitto.conf
+
+api-backend/src/main/resources/application.properties
+daten-simulator/src/main/resources/application.properties
+

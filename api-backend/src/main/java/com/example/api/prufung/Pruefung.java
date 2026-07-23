@@ -44,7 +44,7 @@ public class Pruefung {
     @JoinColumn(name = "modul_id", nullable = false)
     private Modul modul;
 
-    @OneToMany(mappedBy = "pruefung", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pruefung", cascade = CascadeType.ALL)
     private List<Pruefungsanmeldung> anmeldungen = new ArrayList<>();
 
     public enum Pruefungstyp {

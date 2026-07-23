@@ -33,7 +33,6 @@ public class KursService {
     modul.setKurs(kurs);
     modulRepository.save(modul);
 
-    //Kurs gespeichert = kursRepository.save(kurs);
 
     return new KursResponse(
             kurs.getKursId(),

@@ -108,7 +108,7 @@ function App() {
     );
   }
 
-  
+
 
   if (view === "home") {
     return <HomeView onEnter={enterFromHome} />;
@@ -141,6 +141,11 @@ function App() {
           *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
         }
       `}</style>
+      <style>
+        {`
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+  `}
+      </style>
 
       <Background role={role} />
 

@@ -1,3 +1,4 @@
+
 import Input from "../components/Input";
 import Btn from "../components/Btn";
 import Alert from "../components/Alert";
@@ -6,7 +7,6 @@ import RoleTag from "../components/RoleTag";
 import FormCard from "../layout/FormCard";
 import { ROLES } from "../config/roles";
 import Select from "../components/SelectDropdown";
-import DatePicker from "../components/DatePicker";
 import { registerStudent, registerProfessor } from "../api/authApi";
 import { useState } from "react";
 import DateInput from "../components/DateInput";
@@ -27,6 +27,7 @@ const TITEL_OPTIONEN = [
 
 export default function RegisterView({ role, onBack, onSuccess }) {
   const t = ROLES[role];
+
   const [vorname, setVorname] = useState("");
   const [nachname, setNachname] = useState("");
   const [email, setEmail] = useState("");
@@ -46,52 +47,76 @@ export default function RegisterView({ role, onBack, onSuccess }) {
   const [alert, setAlert] = useState(null);
 
   const handle = async () => {
-    if (!vorname || !nachname || !email || !pass || !pass2 || !geburtsdatum)
+    if (
+      !vorname ||
+      !nachname ||
+      !email ||
+      !pass ||
+      !pass2 ||
+      !geburtsdatum
+    ) {
       return setAlert({
         msg: "Bitte alle Pflichtfelder ausfüllen.",
         type: "error",
       });
-    if (pass !== pass2)
+    }
+
+    if (pass !== pass2) {
       return setAlert({
         msg: "Passwörter stimmen nicht überein.",
         type: "error",
       });
-    if (pass.length < 8)
+    }
+
+    if (pass.length < 8) {
       return setAlert({
         msg: "Passwort muss mindestens 8 Zeichen haben.",
         type: "error",
       });
+    }
 
     if (role === "student") {
-      if (!studiengang)
+      if (!studiengang) {
         return setAlert({
           msg: "Bitte einen Studiengang auswählen.",
           type: "error",
         });
-      if (matrikelNr.length !== 7)
+      }
+
+      if (matrikelNr.length !== 7) {
         return setAlert({
           msg: "Matrikelnummer muss 7 Ziffern haben.",
           type: "error",
         });
+      }
     }
 
     if (role === "professor") {
-      if (!titel)
-        return setAlert({ msg: "Bitte einen Titel auswählen.", type: "error" });
-      if (!fachbereich)
+      if (!titel) {
+        return setAlert({
+          msg: "Bitte einen Titel auswählen.",
+          type: "error",
+        });
+      }
+
+      if (!fachbereich) {
         return setAlert({
           msg: "Bitte den Fachbereich angeben.",
           type: "error",
         });
-      if (persoNr.length !== 7)
+      }
+
+      if (persoNr.length !== 7) {
         return setAlert({
           msg: "Personalnummer muss 7 Ziffern haben.",
           type: "error",
         });
+      }
     }
 
     setLoading(true);
     setAlert(null);
+
     try {
       if (role === "student") {
         await registerStudent({
@@ -117,166 +142,327 @@ export default function RegisterView({ role, onBack, onSuccess }) {
         });
       }
 
-      console.log("Registrierung erfolgreich");
-      console.log(email);
-
       if (typeof onSuccess === "function") {
-        console.log("onSuccess wird aufgerufen");
         onSuccess(email);
-      } else {
-        console.log("onSuccess ist:", onSuccess);
       }
     } catch (err) {
-      setAlert({ msg: err.message, type: "error" });
+      setAlert({
+        msg: err.message,
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <FormCard role={role}>
-      <RoleTag t={t} />
-      <h2
-        style={{
-          color: "#fff",
-          fontSize: 24,
-          fontWeight: 700,
-          margin: "16px 0 4px",
-        }}
-      >
-        Konto erstellen
-      </h2>
-      <p
-        style={{
-          color: "rgba(255,255,255,0.45)",
-          fontSize: 13,
-          marginBottom: 28,
-        }}
-      >
-        Registrierung als {t.label}
-      </p>
+    <>
+      <style>
+        {`
+          @keyframes registerEnter {
+            from {
+              opacity: 0;
+              transform: translateY(18px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
 
-      {alert && <Alert {...alert} />}
+          @keyframes pulseLine {
+            0%, 100% {
+              opacity: 0.35;
+            }
+            50% {
+              opacity: 1;
+            }
+          }
 
-      <Input
-        label="Vorname"
-        value={vorname}
-        onChange={setVorname}
-        placeholder="Max"
-        role={role}
-      />
-      <Input
-        label="Nachname"
-        value={nachname}
-        onChange={setNachname}
-        placeholder="Mustermann"
-        role={role}
-      />
+          @keyframes blink {
+            0%, 45% {
+              opacity: 1;
+            }
+            46%, 100% {
+              opacity: 0;
+            }
+          }
 
-      {role === "student" && (
-        <Input
-          label="Matrikelnummer"
-          value={matrikelNr}
-          onChange={setMatrikelNr}
-          placeholder="1234567"
-          role={role}
-        />
-      )}
+          .register-view {
+            animation: registerEnter 0.55s ease-out forwards;
+            font-family: Bahnschrift, "Segoe UI", Arial, sans-serif;
+          }
 
-      {role === "professor" && (
-        <Input
-          label="Personalnummer"
-          value={persoNr}
-          onChange={setPersoNr}
-          placeholder="1234567"
-          role={role}
-        />
-      )}
+          .register-line {
+            animation: pulseLine 2.5s ease-in-out infinite;
+          }
 
-      <DateInput
-        label="Geburtsdatum"
-        value={geburtsdatum}
-        onChange={(value) => {
-          console.log(value);
-          setGeburtsdatum(value);
-        }}
-        role={role}
-      />
+          .register-cursor {
+            animation: blink 1s step-end infinite;
+          }
 
-      {role === "student" && (
-        <>
-          <Select
-            label="Studiengang"
-            value={studiengang}
-            onChange={setStudiengang}
-            placeholder="Studiengang auswählen …"
-            options={STUDIENGAENGE}
-            role={role}
+          .register-field {
+            transition:
+              transform 0.2s ease,
+              opacity 0.2s ease;
+          }
+
+          .register-field:hover {
+            transform: translateY(-1px);
+          }
+
+          .register-action {
+            transition:
+              transform 0.2s ease,
+              opacity 0.2s ease;
+          }
+
+          .register-action:hover {
+            transform: translateY(-1px);
+          }
+
+          .register-action:active {
+            transform: translateY(0);
+          }
+        `}
+      </style>
+
+      <div className="register-view">
+        <FormCard role={role}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 18,
+            }}
+          >
+            <RoleTag t={t} />
+
+            <span
+              style={{
+                fontFamily:
+                  '"JetBrains Mono", "SFMono-Regular", Consolas, monospace',
+                fontSize: 9,
+                letterSpacing: "0.12em",
+                padding: "4px 8px",
+                borderRadius: 5,
+                background: "rgba(15, 23, 42, 0.8)",
+                border: "1px solid rgba(148, 163, 184, 0.18)",
+                color: "rgba(255,255,255,0.35)",
+              }}
+            >
+              02
+            </span>
+          </div>
+
+          <div
+            className="register-line"
+            style={{
+              width: 32,
+              height: 1,
+              background: t.accent,
+              marginBottom: 18,
+            }}
           />
-          <Input
-            label="Semester"
-            type="number"
-            value={semester}
-            onChange={setSemester}
-            placeholder="1"
-            role={role}
-          />
-        </>
-      )}
 
-      {role === "professor" && (
-        <>
-          <Select
-            label="Titel"
-            value={titel}
-            onChange={setTitel}
-            placeholder="Titel auswählen …"
-            options={TITEL_OPTIONEN}
-            role={role}
-          />
-          <Input
-            label="Fachbereich"
-            value={fachbereich}
-            onChange={setFachbereich}
-            placeholder="Informatik"
-            role={role}
-          />
-        </>
-      )}
+          <h2
+            style={{
+              color: "#fff",
+              fontSize: 25,
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              margin: "0 0 8px",
+            }}
+          >
+            Konto erstellen
+            <span
+              className="register-cursor"
+              style={{
+                color: t.accent,
+                marginLeft: 3,
+              }}
+            >
+              _
+            </span>
+          </h2>
 
-      <Input
-        label="E-Mail-Adresse"
-        type="email"
-        value={email}
-        onChange={setEmail}
-        placeholder="name@hochschule.de"
-        role={role}
-      />
-      <Input
-        label="Passwort"
-        type="password"
-        value={pass}
-        onChange={setPass}
-        placeholder="Mindestens 8 Zeichen"
-        role={role}
-      />
-      <Input
-        label="Passwort bestätigen"
-        type="password"
-        value={pass2}
-        onChange={setPass2}
-        placeholder="••••••••"
-        role={role}
-      />
+          <p
+            style={{
+              color: "rgba(255,255,255,0.42)",
+              fontSize: 12,
+              lineHeight: 1.7,
+              marginBottom: 28,
+            }}
+          >
+            Neues Konto für den Bereich {t.label} erstellen
+          </p>
 
-      <div style={{ marginBottom: 20 }} />
-      <Btn role={role} onClick={handle} loading={loading}>
-        Konto erstellen
-      </Btn>
-      <Divider />
-      <Btn role={role} variant="ghost" onClick={onBack}>
-        ← Zurück zum Login
-      </Btn>
-    </FormCard>
+          {alert && <Alert {...alert} />}
+
+          <div className="register-field">
+            <Input
+              label="Vorname"
+              value={vorname}
+              onChange={setVorname}
+              placeholder="Max"
+              role={role}
+            />
+          </div>
+
+          <div className="register-field">
+            <Input
+              label="Nachname"
+              value={nachname}
+              onChange={setNachname}
+              placeholder="Mustermann"
+              role={role}
+            />
+          </div>
+
+          {role === "student" && (
+            <div className="register-field">
+              <Input
+                label="Matrikelnummer"
+                value={matrikelNr}
+                onChange={setMatrikelNr}
+                placeholder="1234567"
+                role={role}
+              />
+            </div>
+          )}
+
+          {role === "professor" && (
+            <div className="register-field">
+              <Input
+                label="Personalnummer"
+                value={persoNr}
+                onChange={setPersoNr}
+                placeholder="1234567"
+                role={role}
+              />
+            </div>
+          )}
+
+          <div className="register-field">
+            <DateInput
+              label="Geburtsdatum"
+              value={geburtsdatum}
+              onChange={setGeburtsdatum}
+              role={role}
+            />
+          </div>
+
+          {role === "student" && (
+            <>
+              <div className="register-field">
+                <Select
+                  label="Studiengang"
+                  value={studiengang}
+                  onChange={setStudiengang}
+                  placeholder="Studiengang auswählen …"
+                  options={STUDIENGAENGE}
+                  role={role}
+                />
+              </div>
+
+              <div className="register-field">
+                <Input
+                  label="Semester"
+                  type="number"
+                  value={semester}
+                  onChange={setSemester}
+                  placeholder="1"
+                  role={role}
+                />
+              </div>
+            </>
+          )}
+
+          {role === "professor" && (
+            <>
+              <div className="register-field">
+                <Select
+                  label="Titel"
+                  value={titel}
+                  onChange={setTitel}
+                  placeholder="Titel auswählen …"
+                  options={TITEL_OPTIONEN}
+                  role={role}
+                />
+              </div>
+
+              <div className="register-field">
+                <Input
+                  label="Fachbereich"
+                  value={fachbereich}
+                  onChange={setFachbereich}
+                  placeholder="Informatik"
+                  role={role}
+                />
+              </div>
+            </>
+          )}
+
+          <div className="register-field">
+            <Input
+              label="E-Mail-Adresse"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              placeholder="name@hochschule.de"
+              role={role}
+            />
+          </div>
+
+          <div className="register-field">
+            <Input
+              label="Passwort"
+              type="password"
+              value={pass}
+              onChange={setPass}
+              placeholder="Mindestens 8 Zeichen"
+              role={role}
+            />
+          </div>
+
+          <div className="register-field">
+            <Input
+              label="Passwort bestätigen"
+              type="password"
+              value={pass2}
+              onChange={setPass2}
+              placeholder="••••••••"
+              role={role}
+            />
+          </div>
+
+          <div style={{ marginBottom: 20 }} />
+
+          <div className="register-action">
+            <Btn
+              role={role}
+              onClick={handle}
+              loading={loading}
+            >
+              Konto erstellen
+            </Btn>
+          </div>
+
+          <Divider />
+
+          <div className="register-action">
+            <Btn
+              role={role}
+              variant="ghost"
+              onClick={onBack}
+            >
+              ← Zurück zum Login
+            </Btn>
+          </div>
+        </FormCard>
+      </div>
+    </>
   );
 }
+
