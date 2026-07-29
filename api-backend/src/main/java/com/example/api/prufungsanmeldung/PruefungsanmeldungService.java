@@ -31,7 +31,7 @@ public class PruefungsanmeldungService {
     }
 
     public List<PruefungMitAnmeldungResponse> getPruefungenFuerStudent(UUID studentId) {
-        List<Pruefung> alleAktivenPruefungen = pruefungRepository.findAll(); // ggf. nach Studiengang/Modul filtern
+        List<Pruefung> alleAktivenPruefungen = pruefungRepository.findAll();
         List<Pruefungsanmeldung> anmeldungen = anmeldungRepository.findByStudentId(studentId);
 
         return alleAktivenPruefungen.stream()
@@ -86,7 +86,6 @@ public class PruefungsanmeldungService {
         } else {
             anmeldung.setAnmeldeDatum(today);
         }
-        // Status wird über den Enum-Default gesetzt bzw. muss hier explizit re-aktiviert werden:
         setStatus(anmeldung, Pruefungsanmeldung.Status.ANGEMELDET);
 
         Pruefungsanmeldung saved = anmeldungRepository.save(anmeldung);
@@ -123,7 +122,7 @@ public class PruefungsanmeldungService {
     }
 
     private void setStatus(Pruefungsanmeldung anmeldung, Pruefungsanmeldung.Status status) {
-        anmeldung.setStatusInternal(status);
+        anmeldung.setStatus(status);
     }
     
 }

@@ -16,7 +16,7 @@ import com.example.api.user.User;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Student extends User {
 
-    @Column(name = "matrikel_nr", nullable = false, unique = true, length = 20)
+    @Column(name = "matrikel_nr", nullable = false, length = 20)
     private String matrikelNr;
 
     @Column(name = "studiengang", nullable = false, length = 150)
@@ -25,7 +25,7 @@ public class Student extends User {
     @Column(name = "semester", nullable = false)
     private Integer semester;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Pruefungsanmeldung> pruefungsanmeldungen = new ArrayList<>();
 
     public Student() {

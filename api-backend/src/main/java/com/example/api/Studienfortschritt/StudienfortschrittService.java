@@ -87,11 +87,7 @@ public byte[] generatePdf(UUID studentId, String studentName) {
         PdfWriter.getInstance(document, out);
         document.open();
 
-        /*
-         * =========================
-         * SCHWARZ-WEISS DESIGN
-         * =========================
-         */
+       
 
         java.awt.Color black = java.awt.Color.BLACK;
         java.awt.Color darkGray = new java.awt.Color(55, 55, 55);
@@ -147,11 +143,7 @@ public byte[] generatePdf(UUID studentId, String studentName) {
                 gray
         );
 
-        /*
-         * =========================
-         * HEADER
-         * =========================
-         */
+       
 
         Paragraph title = new Paragraph("STUDIENFORTSCHRITT", titleFont);
         title.setSpacingAfter(4);
@@ -168,10 +160,7 @@ public byte[] generatePdf(UUID studentId, String studentName) {
         sub.setSpacingAfter(18);
         document.add(sub);
 
-        /*
-         * Trennlinie unter dem Header
-         */
-
+        
         PdfPTable headerLine = new PdfPTable(1);
         headerLine.setWidthPercentage(100);
 
@@ -183,11 +172,7 @@ public byte[] generatePdf(UUID studentId, String studentName) {
         headerLine.addCell(lineCell);
         document.add(headerLine);
 
-        /*
-         * =========================
-         * KPI BEREICH
-         * =========================
-         */
+        
 
         PdfPTable kpiTable = new PdfPTable(4);
         kpiTable.setWidthPercentage(100);
@@ -237,11 +222,6 @@ public byte[] generatePdf(UUID studentId, String studentName) {
 
         document.add(kpiTable);
 
-        /*
-         * =========================
-         * PRÜFUNGEN
-         * =========================
-         */
 
         addExamSection(
                 document,
@@ -276,11 +256,7 @@ public byte[] generatePdf(UUID studentId, String studentName) {
                 lightGray
         );
 
-        /*
-         * =========================
-         * FOOTER
-         * =========================
-         */
+       
 
         Paragraph footer = new Paragraph(
                 "Studienfortschritt · Automatisch generierter Bericht",

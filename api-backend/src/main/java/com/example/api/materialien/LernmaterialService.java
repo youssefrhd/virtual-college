@@ -6,13 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -26,39 +26,35 @@ import com.example.api.materialien.MaterialDTO.MaterialListResponse;
 import com.example.api.materialien.MaterialDTO.PdfCreateData;
 import com.example.api.materialien.MaterialDTO.PdfMaterialRequest;
 import com.example.api.materialien.MaterialDTO.PdfMaterialResponse;
-import com.example.api.modul.Modul;
-import com.example.api.modul.ModulRepository;
 
 @Service
 public class LernmaterialService {
 
     private final BaseMaterialRepository materialRepository;
     private final KursRepository kursRepository;
-    private final PdfFactory pdfFactory;
-    private final LinkFactory linkFactory;
+
+ 
+    private final Map<String, LernmaterialFactory> factories;
 
     @Value("${material.upload-dir}")
     private String uploadDir;
 
+  
     public LernmaterialService(BaseMaterialRepository materialRepository,
             KursRepository kursRepository,
-            PdfFactory pdfFactory,
-            LinkFactory linkFactory) {
+            Map<String, LernmaterialFactory> factories) {
         this.materialRepository = materialRepository;
         this.kursRepository = kursRepository;
-        this.pdfFactory = pdfFactory;
-        this.linkFactory = linkFactory;
+        this.factories = factories;
     }
 
     public PdfMaterialResponse pdfMaterialAnlegen(PdfMaterialRequest request) throws IOException {
         if (request.titel() == null || request.titel().isBlank()) {
             throw new IllegalArgumentException("Titel darf nicht leer sein.");
         }
-
         if (request.kursId() == null) {
             throw new IllegalArgumentException("Modul-ID darf nicht leer sein.");
         }
-
         if (request.datei() == null || request.datei().isEmpty()) {
             throw new IllegalArgumentException("Keine PDF-Datei hochgeladen.");
         }
@@ -89,7 +85,9 @@ public class LernmaterialService {
                 zielpfad.toString(),
                 seitenAnzahl, kurs);
 
-        PdfMaterial material = pdfFactory.create(createData);
+    
+        LernmaterialFactory factory = factories.get("pdfFactory");
+        PdfMaterial material = (PdfMaterial) factory.create(createData);
         PdfMaterial gespeichert = (PdfMaterial) materialRepository.save(material);
 
         return toPdfResponse(gespeichert);
@@ -99,11 +97,9 @@ public class LernmaterialService {
         if (request.titel() == null || request.titel().isBlank()) {
             throw new IllegalArgumentException("Titel darf nicht leer sein.");
         }
-
         if (request.url() == null || request.url().isBlank()) {
             throw new IllegalArgumentException("URL darf nicht leer sein.");
         }
-
         if (request.kursId() == null) {
             throw new IllegalArgumentException("Modul-ID darf nicht leer sein.");
         }
@@ -116,7 +112,8 @@ public class LernmaterialService {
                 request.url(),
                 kurs);
 
-        LinkMaterial material = linkFactory.create(createData);
+        LernmaterialFactory factory = factories.get("linkFactory");
+        LinkMaterial material = (LinkMaterial) factory.create(createData);
         LinkMaterial gespeichert = (LinkMaterial) materialRepository.save(material);
 
         return toLinkResponse(gespeichert);
@@ -147,8 +144,7 @@ public class LernmaterialService {
         BaseMaterial material = materialRepository.findById(materialId)
                 .orElseThrow(() -> new IllegalArgumentException("Material nicht gefunden: " + materialId));
 
-                
-        return toLinkResponse((LinkMaterial)material);
+        return toLinkResponse((LinkMaterial) material);
     }
 
     public List<MaterialListResponse> getMaterialienVonKurs(UUID kursId) {
@@ -161,7 +157,6 @@ public class LernmaterialService {
                         m.getHochgeladenAm()))
                 .toList();
     }
-
 
     public void materialLoeschen(Long materialId) {
         BaseMaterial material = materialRepository.findById(materialId)
@@ -197,35 +192,4 @@ public class LernmaterialService {
                 path.getFileName().toString(),
                 MediaType.APPLICATION_PDF);
     }
-
-    private MaterialDTO.MaterialResponse toMaterialResponse(BaseMaterial material) {
-        if (material instanceof PdfMaterial pdf) {
-            return new MaterialDTO.MaterialResponse(
-                    pdf.getMaterialId(),
-                    pdf.getTitel(),
-                    "PDF",
-                    pdf.getPfad(),
-                    null,
-                    pdf.getHochgeladenAm(),
-                    pdf.getKurs().getKursId(),
-                    pdf.getKurs().getTitel(),
-                    pdf.getSeitenAnzahl());
-        }
-
-        if (material instanceof LinkMaterial link) {
-            return new MaterialDTO.MaterialResponse(
-                    link.getMaterialId(),
-                    link.getTitel(),
-                    "LINK",
-                    null,
-                    link.getUrl(),
-                    link.getHochgeladenAm(),
-                    link.getKurs().getKursId(),
-                    link.getKurs().getTitel(),
-                    null);
-        }
-
-        throw new IllegalStateException("Unbekannter Materialtyp");
-    }
-
 }

@@ -68,7 +68,7 @@ public class Pruefungsanmeldung {
         return anmeldungId;
     }
 
-    public void setStatusInternal(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

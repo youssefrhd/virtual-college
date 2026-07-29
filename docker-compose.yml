@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: vc-postgres
+    environment:
+      POSTGRES_DB: vcdb
+      POSTGRES_USER: vcuser
+      POSTGRES_PASSWORD: swt@2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: vc-mqtt
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  api-backend:
+    build:
+      context: .
+      dockerfile: api-backend/Dockerfile
+    container_name: vc-api-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/vcdb
+      DATABASE_USER: vcuser
+      DATABASE_PASSWORD: swt@2026
+      MQTT_URL: tcp://mqtt:1883
+    depends_on:
+      - postgres
+      - mqtt
+
+  daten-simulator:
+    build:
+      context: .
+      dockerfile: daten-simulator/Dockerfile
+    container_name: vc-daten-simulator
+    ports:
+      - "8081:8081"
+    environment:
+      MQTT_URL: tcp://mqtt:1883
+    depends_on:
+      - mqtt
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: http://localhost:8080
+    container_name: vc-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-backend
+
+volumes:
+  postgres-data:
