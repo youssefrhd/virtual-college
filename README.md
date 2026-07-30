@@ -13,23 +13,7 @@ This template is set up as a multi-module Maven repository with Spring Boot `4.0
 
 Run all Maven modules from the repository root:
 
-```bash
-./mvnw verify
-./mvnw -pl app spring-boot:run
-```
 
-Open the starter application endpoints:
-
-```text
-http://localhost:8080/api/hello
-http://localhost:8080/actuator/health
-```
-
-Build the default container image from the repository root:
-
-```bash
-docker build -f Dockerfile.java --build-arg MODULE=app .
-```
 
 ## Prerequisites
 
@@ -59,26 +43,6 @@ Run the default Spring Boot application module:
 ./mvnw -pl app spring-boot:run
 ```
 
-Package only the default application module:
-
-```bash
-./mvnw -pl app -am package
-java -jar app/target/app-1.0.0-SNAPSHOT.jar
-```
-
-## Project Structure
-
-```text
-ProjectName/
-├── pom.xml                     # Parent and aggregator Maven project
-├── app/                        # Starter application module
-│   ├── pom.xml
-│   └── src/
-├── Dockerfile.java             # Container build for a selected Maven module
-├── .github/ISSUE_TEMPLATE/     # Planning and bug-report templates
-├── .github/PULL_REQUEST_TEMPLATE.md
-└── .github/workflows/          # CI and release automation
-```
 
 ## Software Development Lifecycle
 
