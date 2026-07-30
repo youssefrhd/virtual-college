@@ -8,11 +8,6 @@
 
 This template is set up as a multi-module Maven repository with Spring Boot `4.0.6` on Java `21`. GitHub Actions builds the repository from the root `pom.xml`, so you do not need to edit workflow files when you rename or add Maven modules.
 
-## Team
-
-Team Leader: Anton Jelisejev
-
-Members:  Hanae Mossaid,Zakaria Ezzaza,Youssef El Rhadir ,Mohamed Alkilani ,Anton Jelisejev,Niryan Maniventhan,Philipp Ehlers 
 
 ## Quickstart
 
