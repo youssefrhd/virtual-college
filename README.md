@@ -140,7 +140,7 @@ User (abstrakt)
   └── Professor → ProfService, ProfRepository
 ```
 
-Gemeinsame Attribute/Methoden zentral in `User`, rollenspezifisches Verhalten in den Subklassen. Anbindung an Spring Security über `UserDetailsServiceImpl`.
+Gemeinsame Attribute/Methoden zentral in `User`, rollenspezifisches Verhalten in den Subklassen.
 
 ---
 
