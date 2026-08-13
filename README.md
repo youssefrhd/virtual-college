@@ -13,8 +13,6 @@ Virtual College ist eine vollständige Full-Stack-Webanwendung für ein digitale
 - [Entwurfsmuster](#-entwurfsmuster-design-patterns)
 - [Projektstruktur](#-projektstruktur)
 - [Installation & Setup](#-installation--setup)
-- [Team & Rollen](#-team--rollen)
-- [Sprints](#-sprints--vorgehen)
 
 ---
 
